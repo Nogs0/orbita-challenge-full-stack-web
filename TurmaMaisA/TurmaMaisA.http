@@ -1,0 +1,6 @@
+@TurmaMaisA_HostAddress = http://localhost:5186
+
+GET {{TurmaMaisA_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
