@@ -1,8 +1,8 @@
 ﻿using TurmaMaisA.Models;
 using TurmaMaisA.Persistence;
-using TurmaMaisA.Repositories.Shared;
+using TurmaMaisA.Persistence.Repositories.Shared;
 
-namespace TurmaMaisA.Repositories.Enrollments
+namespace TurmaMaisA.Persistence.Repositories.Enrollments
 {
     public class EnrollmentRepository : BaseRepository<Enrollment>, IEnrollmentRepository
     {

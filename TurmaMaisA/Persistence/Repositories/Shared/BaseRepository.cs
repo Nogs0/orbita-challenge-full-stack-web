@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TurmaMaisA.Models.Shared;
 using TurmaMaisA.Persistence;
 
-namespace TurmaMaisA.Repositories.Shared
+namespace TurmaMaisA.Persistence.Repositories.Shared
 {
     public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
         where TEntity : BaseEntity

@@ -1,7 +1,7 @@
 ﻿using TurmaMaisA.Models;
-using TurmaMaisA.Repositories.Shared;
+using TurmaMaisA.Persistence.Repositories.Shared;
 
-namespace TurmaMaisA.Repositories.Organizations
+namespace TurmaMaisA.Persistence.Repositories.Organizations
 {
     public interface IOrganizationRepository : IBaseRepository<Organization>
     {

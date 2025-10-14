@@ -1,7 +1,7 @@
 ﻿using TurmaMaisA.Models;
-using TurmaMaisA.Repositories.Shared;
+using TurmaMaisA.Persistence.Repositories.Shared;
 
-namespace TurmaMaisA.Repositories.Students
+namespace TurmaMaisA.Persistence.Repositories.Students
 {
     public interface IStudentRepository : IBaseRepository<Student>
     {

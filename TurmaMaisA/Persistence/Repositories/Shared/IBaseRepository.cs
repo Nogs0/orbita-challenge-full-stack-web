@@ -1,4 +1,4 @@
-﻿namespace TurmaMaisA.Repositories.Shared
+﻿namespace TurmaMaisA.Persistence.Repositories.Shared
 {
     public interface IBaseRepository<TEntity>
     {

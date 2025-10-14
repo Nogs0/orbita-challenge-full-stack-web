@@ -1,9 +1,7 @@
 ﻿using TurmaMaisA.Models;
-using TurmaMaisA.Persistence;
-using TurmaMaisA.Repositories.Classes;
-using TurmaMaisA.Repositories.Shared;
+using TurmaMaisA.Persistence.Repositories.Shared;
 
-namespace TurmaMaisA.Repositories.Courses
+namespace TurmaMaisA.Persistence.Repositories.Courses
 {
     public class CourseRepository : BaseRepository<Course>, ICourseRepository
     {
