@@ -4,8 +4,11 @@ using TurmaMaisA.Models;
 
 namespace TurmaMaisA.Persistence
 {
-    public class AppDbContext : IdentityDbContext<User>, IUnitOfWork
+    public class AppDbContext : IdentityUserContext<User>, IUnitOfWork
     {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        { }
+
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Course> Courses { get; set; }
