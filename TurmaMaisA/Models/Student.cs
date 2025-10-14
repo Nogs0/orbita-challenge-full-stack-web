@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using TurmaMaisA.Models.Shared;
-using TurmaMaisA.Repositories.Shared;
 
 namespace TurmaMaisA.Models
 {
@@ -19,5 +18,6 @@ namespace TurmaMaisA.Models
         public required string Cpf { get; set; }
 
         public Guid OrganizationId { get; set; }
+        public Organization? Organization { get; set; }
     }
 }
