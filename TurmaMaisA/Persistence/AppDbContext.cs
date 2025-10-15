@@ -53,6 +53,14 @@ namespace TurmaMaisA.Persistence
                         .HasQueryFilter(ConvertToExp(entityType.ClrType));
                 }
             }
+
+            modelBuilder.Entity<Student>()
+                .HasIndex(s => s.RA)
+                .IsUnique();
+
+            modelBuilder.Entity<Student>()
+                .HasIndex(s => s.Cpf)
+                .IsUnique();
         }
 
         private LambdaExpression ConvertToExp(Type type)

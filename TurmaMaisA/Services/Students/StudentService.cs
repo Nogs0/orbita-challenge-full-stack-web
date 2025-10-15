@@ -23,7 +23,7 @@ namespace TurmaMaisA.Services.Students
             {
                 Name = dto.Name,
                 Cpf = dto.Cpf,
-                RA = studentCount.ToString(),
+                RA = (studentCount + 1).ToString(),
                 Email = dto.Email,
             };
 
@@ -47,13 +47,12 @@ namespace TurmaMaisA.Services.Students
             return new StudentDto(entity);
         }
 
-        public async Task UpdateAsync(StudentDto dto)
+        public async Task UpdateAsync(StudentUpdateDto dto)
         {
             var entity = await _repository.GetByIdAsync(dto.Id) ??
                 throw new Exception($"Student with id: {dto.Id} not found.");
             
             entity.Name  = dto.Name;
-            entity.Cpf = dto.Cpf;
             entity.Email = dto.Email;
 
             _repository.Update(entity);
