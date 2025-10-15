@@ -1,4 +1,4 @@
-﻿namespace TurmaMaisA.Services.Auth.DTOs
+﻿namespace TurmaMaisA.Services.Auth.Dtos
 {
     public class LoginDTO
     {

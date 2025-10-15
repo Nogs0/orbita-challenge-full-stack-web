@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TurmaMaisA.Services.Auth;
-using TurmaMaisA.Services.Auth.DTOs;
+using TurmaMaisA.Services.Auth.Dtos;
 
 namespace TurmaMaisA.Controllers
 {
@@ -27,6 +27,20 @@ namespace TurmaMaisA.Controllers
                 return Ok(new { token = result.Token, expiration = result.TokenExpiration });
 
             return Unauthorized(new { message = result.ErrorMessage });
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _service.RegisterUserAsync(dto);
+
+            if (result.IsSuccess)
+                return Ok(new { token = result.Token, expiration = result.TokenExpiration });
+
+            return BadRequest(new { errors = result.ErrorMessage });
         }
     }
 }

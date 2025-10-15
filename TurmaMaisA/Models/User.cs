@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using TurmaMaisA.Models.Shared;
 
 namespace TurmaMaisA.Models
 {
-    public class User : IdentityUser, IMustHaveOrganizationId
+    public class User : IdentityUser
     {
+        public string FullName { get; set; }
         public Guid OrganizationId { get; set; }
         public Organization? Organization { get; set; }
     }

@@ -5,7 +5,6 @@ using System.Security.Claims;
 using System.Text;
 using TurmaMaisA.Models;
 using TurmaMaisA.Services.Auth.Dtos;
-using TurmaMaisA.Services.Auth.DTOs;
 
 namespace TurmaMaisA.Services.Auth
 {
@@ -13,20 +12,67 @@ namespace TurmaMaisA.Services.Auth
     {
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<AuthService> _logger;
 
-        public AuthService(UserManager<User> userManager, IConfiguration configuration)
+        public AuthService(UserManager<User> userManager, 
+            IConfiguration configuration,
+            ILogger<AuthService> logger)
         {
             _userManager = userManager;
             _configuration = configuration;
+            _logger = logger;
         }
 
         public async Task<AuthDto> LoginAsync(LoginDTO dto)
         {
-            var user = await _userManager.FindByNameAsync(dto.Username);
+            var user = await _userManager.FindByEmailAsync(dto.Username);
             if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password))
             {
                 return new AuthDto { IsSuccess = false, ErrorMessage = "Usuário ou senha inválidos." };
             }
+
+            var tokenDetails = GenerateJwtToken(user);
+
+            return new AuthDto
+            {
+                IsSuccess = true,
+                Token = tokenDetails.tokenString,
+                TokenExpiration = tokenDetails.expiration
+            };
+        }
+
+        public async Task<AuthDto> RegisterUserAsync(RegisterDto dto)
+        {
+            var userExists = await _userManager.FindByEmailAsync(dto.Email);
+            if (userExists != null)
+                throw new Exception("Email já cadastrado.");
+
+            var organization = new Organization()
+            {
+                Name = dto.OrganizationName,
+            };
+
+            var user = new User()
+            {
+                Email = dto.Email,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = dto.Email,
+                FullName = dto.FullName,
+                Organization = organization
+            };
+
+            var result = await _userManager.CreateAsync(user, dto.Password);
+
+            if (!result.Succeeded)
+            {
+                return new AuthDto
+                {
+                    IsSuccess = false,
+                    ErrorMessage = string.Join(",", result.Errors.Select(e => e.Description).ToArray())
+                };
+            }
+            
+            _logger.LogInformation($"Usuário {user.Email} criado com sucesso. Gerando token de login.", user.Email);
 
             var tokenDetails = GenerateJwtToken(user);
 
