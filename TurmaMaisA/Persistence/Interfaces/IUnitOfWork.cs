@@ -1,4 +1,4 @@
-﻿namespace TurmaMaisA.Persistence
+﻿namespace TurmaMaisA.Persistence.Interfaces
 {
     public interface IUnitOfWork
     {

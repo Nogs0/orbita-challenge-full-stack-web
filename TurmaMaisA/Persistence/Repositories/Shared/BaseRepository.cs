@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using TurmaMaisA.Models.Shared;
 using TurmaMaisA.Persistence;
 
@@ -19,14 +20,25 @@ namespace TurmaMaisA.Persistence.Repositories.Shared
             await _dbSet.AddAsync(entity);
         }
 
-        public virtual async Task<IEnumerable<TEntity>> GetAllAsync()
+        public virtual async Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>>? predicate = null)
         {
-            return await _dbSet.ToListAsync();
+            if (predicate == null)
+                return await _dbSet.ToListAsync();
+
+            return await _dbSet.Where(predicate).ToListAsync();
         }
 
         public virtual async Task<TEntity?> GetByIdAsync(Guid id)
         {
             return await _dbSet.FindAsync(id);
+        }
+
+        public async Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null)
+        {
+            if (predicate == null)
+                return await _dbSet.CountAsync();
+
+            return await _dbSet.CountAsync(predicate);
         }
 
         public virtual void Update(TEntity entity)
