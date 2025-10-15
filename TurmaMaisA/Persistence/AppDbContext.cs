@@ -20,7 +20,25 @@ namespace TurmaMaisA.Persistence
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
+            SetOrganizationIdOnAddedEntities();
             return base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void SetOrganizationIdOnAddedEntities()
+        {
+            var addedEntities = ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Added);
+
+            foreach (var entry in addedEntities)
+            {
+                if (entry.Entity is IMustHaveOrganizationId entityWithOrganization)
+                {
+                    if (entityWithOrganization.OrganizationId == Guid.Empty)
+                    {
+                        entityWithOrganization.OrganizationId = OrganizationId;
+                    }
+                }
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
