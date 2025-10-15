@@ -32,7 +32,7 @@ namespace TurmaMaisA.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] StudentDto dto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] StudentUpdateDto dto)
         {
             if (id != dto.Id)
             {

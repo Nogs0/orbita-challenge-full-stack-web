@@ -19,7 +19,7 @@ namespace TurmaMaisA.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CourseDto dto)
+        public async Task<IActionResult> Create([FromBody] CourseCreateDto dto)
         {
             if (!ModelState.IsValid)
             {
