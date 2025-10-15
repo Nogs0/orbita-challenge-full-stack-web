@@ -41,6 +41,14 @@ namespace TurmaMaisA.Persistence.Repositories.Shared
             return await _dbSet.CountAsync(predicate);
         }
 
+        public async Task<int> CountWithIgnoreQueryFiltersAsync(Expression<Func<TEntity, bool>>? predicate = null)
+        {
+            if (predicate == null)
+                return await _dbSet.IgnoreQueryFilters().CountAsync();
+
+            return await _dbSet.IgnoreQueryFilters().CountAsync(predicate);
+        }
+
         public virtual void Update(TEntity entity)
         {
             _dbSet.Update(entity);

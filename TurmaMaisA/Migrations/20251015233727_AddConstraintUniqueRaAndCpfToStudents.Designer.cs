@@ -12,7 +12,7 @@ using TurmaMaisA.Persistence;
 namespace TurmaMaisA.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251015220623_AddConstraintUniqueRaAndCpfToStudents")]
+    [Migration("20251015233727_AddConstraintUniqueRaAndCpfToStudents")]
     partial class AddConstraintUniqueRaAndCpfToStudents
     {
         /// <inheritdoc />
@@ -97,6 +97,9 @@ namespace TurmaMaisA.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(128)
@@ -120,6 +123,9 @@ namespace TurmaMaisA.Migrations
 
                     b.Property<Guid>("CourseId")
                         .HasColumnType("char(36)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<Guid>("OrganizationId")
                         .HasColumnType("char(36)");
@@ -163,6 +169,9 @@ namespace TurmaMaisA.Migrations
                         .HasMaxLength(14)
                         .HasColumnType("varchar(14)");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(128)
@@ -181,14 +190,19 @@ namespace TurmaMaisA.Migrations
                         .HasMaxLength(9)
                         .HasColumnType("varchar(9)");
 
+                    b.Property<string>("UniqueCPF_Active")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("varchar(255)")
+                        .HasComputedColumnSql("IF(DeletedAt IS NULL, CPF, NULL)", true);
+
                     b.HasKey("Id");
 
                     b.HasIndex("OrganizationId");
 
-                    b.HasIndex("Cpf", "OrganizationId")
+                    b.HasIndex("RA", "OrganizationId")
                         .IsUnique();
 
-                    b.HasIndex("RA", "OrganizationId")
+                    b.HasIndex("UniqueCPF_Active", "OrganizationId")
                         .IsUnique();
 
                     b.ToTable("Students");

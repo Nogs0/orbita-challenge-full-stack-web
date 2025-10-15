@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using TurmaMaisA.Models.Shared;
 
 namespace TurmaMaisA.Models
 {
-    public class Student : BaseEntity, IMustHaveOrganizationId
+    public class Student : BaseEntity, IMustHaveOrganizationId, ISoftDelete
     {
         [MaxLength(128)]
         public required string Name { get; set; }
@@ -19,5 +20,6 @@ namespace TurmaMaisA.Models
 
         public Guid OrganizationId { get; set; }
         public Organization? Organization { get; set; }
+        public DateTime? DeletedAt { get; set; }
     }
 }

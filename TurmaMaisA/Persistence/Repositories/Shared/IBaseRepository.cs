@@ -9,6 +9,7 @@ namespace TurmaMaisA.Persistence.Repositories.Shared
         Task<TEntity?> GetByIdAsync(Guid id);
         Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>>? predicate = null);
         Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null);
+        Task<int> CountWithIgnoreQueryFiltersAsync(Expression<Func<TEntity, bool>>? predicate = null);
         void Update(TEntity entity);
         void Delete(TEntity entity);
     }

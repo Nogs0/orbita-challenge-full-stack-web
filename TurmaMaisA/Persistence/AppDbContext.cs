@@ -21,23 +21,35 @@ namespace TurmaMaisA.Persistence
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             SetOrganizationIdOnAddedEntities();
+            SetIsDeletedOnDeletedEntities();
             return base.SaveChangesAsync(cancellationToken);
         }
 
         private void SetOrganizationIdOnAddedEntities()
         {
             var addedEntities = ChangeTracker.Entries()
-                .Where(e => e.State == EntityState.Added);
+                .Where(e => e.State == EntityState.Added && e.Entity is IMustHaveOrganizationId);
 
             foreach (var entry in addedEntities)
             {
-                if (entry.Entity is IMustHaveOrganizationId entityWithOrganization)
+                var entityMustHaveOrganizationId = (IMustHaveOrganizationId)entry.Entity;
+                if (entityMustHaveOrganizationId.OrganizationId == Guid.Empty)
                 {
-                    if (entityWithOrganization.OrganizationId == Guid.Empty)
-                    {
-                        entityWithOrganization.OrganizationId = OrganizationId;
-                    }
+                    entityMustHaveOrganizationId.OrganizationId = OrganizationId;
                 }
+            }
+        }
+
+        private void SetIsDeletedOnDeletedEntities()
+        {
+            var deletedEntities = ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Deleted && e.Entity is ISoftDelete);
+
+            foreach (var entry in deletedEntities)
+            {
+                var entitySoftDelete = (ISoftDelete)entry.Entity;
+                entitySoftDelete.DeletedAt = DateTime.Now;
+                entry.State = EntityState.Modified;
             }
         }
 
@@ -47,30 +59,53 @@ namespace TurmaMaisA.Persistence
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
+                var parameter = Expression.Parameter(entityType.ClrType, "e");
+
+                Expression? filterBody = null;
+
                 if (typeof(IMustHaveOrganizationId).IsAssignableFrom(entityType.ClrType))
                 {
-                    modelBuilder.Entity(entityType.ClrType)
-                        .HasQueryFilter(ConvertToExp(entityType.ClrType));
+                    // e.OrganizationId == this.OrganizationId
+                    var tenantFilter = Expression.Equal(
+                        Expression.Property(Expression.Convert(parameter, typeof(IMustHaveOrganizationId)), "OrganizationId"),
+                        Expression.Property(Expression.Constant(this), "OrganizationId")
+                    );
+                    filterBody = tenantFilter;
+                }
+
+                if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
+                {
+                    // e.DeletedAt == null
+                    var softDeleteFilter = Expression.Equal(
+                        Expression.Property(Expression.Convert(parameter, typeof(ISoftDelete)), "DeletedAt"),
+                        Expression.Constant(null)
+                    );
+
+                    if (filterBody != null)
+                        filterBody = Expression.AndAlso(filterBody, softDeleteFilter);
+                    else
+                        filterBody = softDeleteFilter;
+                }
+
+                if (filterBody != null)
+                {
+                    var finalLambda = Expression.Lambda(filterBody, parameter);
+
+                    modelBuilder.Entity(entityType.ClrType).HasQueryFilter(finalLambda);
                 }
             }
 
             modelBuilder.Entity<Student>()
-                .HasIndex(s => new {s.RA, s.OrganizationId})
+                .HasIndex(s => new { s.RA, s.OrganizationId })
                 .IsUnique();
 
-            modelBuilder.Entity<Student>()
-                .HasIndex(s => new { s.Cpf, s.OrganizationId })
-                .IsUnique();
-        }
-
-        private LambdaExpression ConvertToExp(Type type)
-        {
-            var parameter = Expression.Parameter(type, "e");
-            var body = Expression.Equal(
-                Expression.Property(Expression.Convert(parameter, typeof(IMustHaveOrganizationId)), "OrganizationId"),
-                Expression.Property(Expression.Constant(this), "OrganizationId")
-            );
-            return Expression.Lambda(body, parameter);
+            modelBuilder.Entity<Student>(entity =>
+            {
+                entity.Property<string>("UniqueCPF_Active")
+                    //    Se DeletedAt for nulo (ativo), a coluna recebe o CPF. Senão, recebe NULL.
+                    .HasComputedColumnSql("IF(DeletedAt IS NULL, CPF, NULL)", stored: true);
+                entity.HasIndex("UniqueCPF_Active", "OrganizationId").IsUnique();
+            });
         }
     }
 }
