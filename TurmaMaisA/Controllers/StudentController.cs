@@ -27,6 +27,11 @@ namespace TurmaMaisA.Controllers
             }
 
             _logger.LogInformation("Creating a new student.");
+            var claimOrganizationId = HttpContext.User.FindFirst("OrganizationId");
+            if (claimOrganizationId == null)
+                return BadRequest("You must to be logged in to create a student.");
+
+            dto.OrganizationId = Guid.Parse(claimOrganizationId.Value);
             var student = await _service.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = student.Id }, student);
         }

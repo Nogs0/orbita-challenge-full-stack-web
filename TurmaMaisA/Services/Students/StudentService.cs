@@ -18,7 +18,7 @@ namespace TurmaMaisA.Services.Students
 
         public async Task<StudentDto> CreateAsync(StudentCreateDto dto)
         {
-            var studentCount = await _repository.CountAsync();
+            var studentCount = await _repository.CountWithIgnoreQueryFiltersAsync(s => s.OrganizationId == dto.OrganizationId);
             var student = new Student()
             {
                 Name = dto.Name,

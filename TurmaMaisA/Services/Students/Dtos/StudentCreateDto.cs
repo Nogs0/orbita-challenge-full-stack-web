@@ -13,5 +13,7 @@ namespace TurmaMaisA.Services.Students.Dtos
 
         [MaxLength(14)]
         public required string Cpf { get; set; }
+
+        public Guid? OrganizationId { get; set; }
     }
 }
