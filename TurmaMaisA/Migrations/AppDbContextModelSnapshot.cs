@@ -118,6 +118,9 @@ namespace TurmaMaisA.Migrations
                     b.Property<Guid>("CourseId")
                         .HasColumnType("char(36)");
 
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("char(36)");
+
                     b.Property<Guid>("StudentId")
                         .HasColumnType("char(36)");
 
@@ -177,12 +180,12 @@ namespace TurmaMaisA.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Cpf")
-                        .IsUnique();
-
                     b.HasIndex("OrganizationId");
 
-                    b.HasIndex("RA")
+                    b.HasIndex("Cpf", "OrganizationId")
+                        .IsUnique();
+
+                    b.HasIndex("RA", "OrganizationId")
                         .IsUnique();
 
                     b.ToTable("Students");

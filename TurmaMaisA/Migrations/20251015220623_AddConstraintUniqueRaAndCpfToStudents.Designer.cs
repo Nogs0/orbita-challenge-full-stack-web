@@ -12,7 +12,7 @@ using TurmaMaisA.Persistence;
 namespace TurmaMaisA.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251015214812_AddConstraintUniqueRaAndCpfToStudents")]
+    [Migration("20251015220623_AddConstraintUniqueRaAndCpfToStudents")]
     partial class AddConstraintUniqueRaAndCpfToStudents
     {
         /// <inheritdoc />
@@ -121,6 +121,9 @@ namespace TurmaMaisA.Migrations
                     b.Property<Guid>("CourseId")
                         .HasColumnType("char(36)");
 
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("char(36)");
+
                     b.Property<Guid>("StudentId")
                         .HasColumnType("char(36)");
 
@@ -180,12 +183,12 @@ namespace TurmaMaisA.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Cpf")
-                        .IsUnique();
-
                     b.HasIndex("OrganizationId");
 
-                    b.HasIndex("RA")
+                    b.HasIndex("Cpf", "OrganizationId")
+                        .IsUnique();
+
+                    b.HasIndex("RA", "OrganizationId")
                         .IsUnique();
 
                     b.ToTable("Students");

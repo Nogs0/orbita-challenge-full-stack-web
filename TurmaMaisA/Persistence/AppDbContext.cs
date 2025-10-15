@@ -55,11 +55,11 @@ namespace TurmaMaisA.Persistence
             }
 
             modelBuilder.Entity<Student>()
-                .HasIndex(s => s.RA)
+                .HasIndex(s => new {s.RA, s.OrganizationId})
                 .IsUnique();
 
             modelBuilder.Entity<Student>()
-                .HasIndex(s => s.Cpf)
+                .HasIndex(s => new { s.Cpf, s.OrganizationId })
                 .IsUnique();
         }
 
