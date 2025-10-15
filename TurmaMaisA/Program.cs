@@ -93,7 +93,7 @@ builder.Services.AddSwaggerGen(options =>
     //    Isso diz ao Swagger como a autenticação da sua API funciona.
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Name = "Authoriazation",
+        Name = "Authorization",
         Type = SecuritySchemeType.Http,
         Scheme = "bearer",
         BearerFormat = "JWT",
@@ -110,11 +110,11 @@ builder.Services.AddSwaggerGen(options =>
             {
                 Reference = new OpenApiReference
                 {
-                    Type = ReferenceType.Schema,
+                    Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
                 }
             },
-            new string[] {}
+            Array.Empty<string>() // ou new string[] {}
         }
     });
 });
