@@ -16,7 +16,7 @@ namespace TurmaMaisA.Services.Courses
             _uow = uow;
         }
 
-        public async Task<CourseDto> CreateAsync(CourseDto dto)
+        public async Task<CourseDto> CreateAsync(CourseCreateDto dto)
         {
             var course = new Course()
             {
