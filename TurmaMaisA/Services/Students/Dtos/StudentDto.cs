@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using TurmaMaisA.Models;
 
 namespace TurmaMaisA.Services.Students.Dtos
@@ -21,6 +22,7 @@ namespace TurmaMaisA.Services.Students.Dtos
 
         public StudentDto() { }
 
+        [SetsRequiredMembers]
         public StudentDto(Student entity)
         {
             Id = entity.Id;

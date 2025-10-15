@@ -1,4 +1,5 @@
-﻿using TurmaMaisA.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using TurmaMaisA.Models;
 
 namespace TurmaMaisA.Services.Courses.Dtos
 {
@@ -9,6 +10,7 @@ namespace TurmaMaisA.Services.Courses.Dtos
 
         public CourseDto() { }
 
+        [SetsRequiredMembers]
         public CourseDto(Course entity)
         {
             Id = entity.Id;

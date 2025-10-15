@@ -1,6 +1,72 @@
-﻿namespace TurmaMaisA.Services.Students
+﻿using TurmaMaisA.Models;
+using TurmaMaisA.Persistence.Interfaces;
+using TurmaMaisA.Persistence.Repositories.Students;
+using TurmaMaisA.Services.Students.Dtos;
+
+namespace TurmaMaisA.Services.Students
 {
     public class StudentService : IStudentService
     {
+        private readonly IStudentRepository _repository;
+        private readonly IUnitOfWork _uow;
+
+        public StudentService(IStudentRepository repository, IUnitOfWork uow)
+        {
+            _repository = repository;
+            _uow = uow;
+        }
+
+        public async Task<StudentDto> CreateAsync(StudentCreateDto dto)
+        {
+            var studentCount = await _repository.CountAsync();
+            var student = new Student()
+            {
+                Name = dto.Name,
+                Cpf = dto.Cpf,
+                RA = studentCount.ToString(),
+                Email = dto.Email,
+            };
+
+            await _repository.CreateAsync(student);
+            await _uow.SaveChangesAsync();
+
+            return new StudentDto(student);
+        }
+
+        public async Task<IEnumerable<StudentDto>> GetAllAsync()
+        {
+            var students = await _repository.GetAllAsync();
+            return students.Select(s => new StudentDto(s));
+        }
+
+        public async Task<StudentDto> GetByIdAsync(Guid id)
+        {
+            var entity = await _repository.GetByIdAsync(id) ??
+                throw new Exception($"Student with id: {id} not found.");
+
+            return new StudentDto(entity);
+        }
+
+        public async Task UpdateAsync(StudentDto dto)
+        {
+            var entity = await _repository.GetByIdAsync(dto.Id) ??
+                throw new Exception($"Student with id: {dto.Id} not found.");
+            
+            entity.Name  = dto.Name;
+            entity.Cpf = dto.Cpf;
+            entity.Email = dto.Email;
+
+            _repository.Update(entity);
+            await _uow.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            var entity = await _repository.GetByIdAsync(id) ??
+                throw new Exception($"Student with id: {id} not found.");
+
+            _repository.Delete(entity);
+            await _uow.SaveChangesAsync();
+        }
     }
 }
