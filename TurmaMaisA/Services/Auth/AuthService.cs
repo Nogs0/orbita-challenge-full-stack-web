@@ -1,25 +1,28 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using TurmaMaisA.Models;
 using TurmaMaisA.Services.Auth.Dtos;
+using TurmaMaisA.Utils.Exceptions;
+using TurmaMaisA.Utils.Settings;
 
 namespace TurmaMaisA.Services.Auth
 {
     public class AuthService : IAuthService
     {
         private readonly UserManager<User> _userManager;
-        private readonly IConfiguration _configuration;
+        private readonly JwtSettings _jwtSettings;
         private readonly ILogger<AuthService> _logger;
 
         public AuthService(UserManager<User> userManager, 
-            IConfiguration configuration,
+            IOptions<JwtSettings> _optionsJwtSettings,
             ILogger<AuthService> logger)
         {
             _userManager = userManager;
-            _configuration = configuration;
+            _jwtSettings = _optionsJwtSettings.Value;
             _logger = logger;
         }
 
@@ -45,7 +48,7 @@ namespace TurmaMaisA.Services.Auth
         {
             var userExists = await _userManager.FindByEmailAsync(dto.Email);
             if (userExists != null)
-                throw new Exception("Email já cadastrado.");
+                throw new BusinessRuleException("Email já cadastrado.");
 
             var organization = new Organization()
             {
@@ -86,6 +89,9 @@ namespace TurmaMaisA.Services.Auth
 
         private (string tokenString, DateTime expiration) GenerateJwtToken(User user)
         {
+            if (string.IsNullOrEmpty(user.UserName))
+                throw new BusinessRuleException("O email do usuário é obrigatório.");
+
             var authClaims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
@@ -95,11 +101,11 @@ namespace TurmaMaisA.Services.Auth
 
             // TO DO: Lógica para buscar e adicionar roles...
 
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
 
             var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
+                issuer: _jwtSettings.Issuer,
+                audience: _jwtSettings.Audience,
                 expires: DateTime.Now.AddHours(3),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)

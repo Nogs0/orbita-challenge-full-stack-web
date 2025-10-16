@@ -19,8 +19,11 @@ using TurmaMaisA.Services.Enrollments;
 using TurmaMaisA.Services.Organizations;
 using TurmaMaisA.Services.Students;
 using TurmaMaisA.Services.Users;
+using TurmaMaisA.Utils.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(JwtSettings.SectionName));
 
 // Add services to the container.
 builder.Services.AddScoped<IOrganizationRepository, OrganizationRepository>();
