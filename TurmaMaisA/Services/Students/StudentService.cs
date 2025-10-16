@@ -4,6 +4,7 @@ using TurmaMaisA.Persistence.Repositories.Courses;
 using TurmaMaisA.Persistence.Repositories.Students;
 using TurmaMaisA.Services.Students.Dtos;
 using TurmaMaisA.Utils.Exceptions;
+using TurmaMaisA.Utils.Validators;
 
 namespace TurmaMaisA.Services.Students
 {
@@ -22,6 +23,10 @@ namespace TurmaMaisA.Services.Students
 
         public async Task<StudentDto> CreateAsync(StudentCreateDto dto)
         {
+            bool cpfIsValid = CpfValidator.Validate(dto.Cpf);
+            if (!cpfIsValid)
+                throw new BusinessRuleException("Given CPF is invalid.");
+
             var studentCount = await _repository.CountWithIgnoreQueryFiltersAsync(s => s.OrganizationId == dto.OrganizationId);
             var student = new Student()
             {

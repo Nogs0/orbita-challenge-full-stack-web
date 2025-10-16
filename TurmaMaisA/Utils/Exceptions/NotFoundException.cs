@@ -11,7 +11,7 @@
         { }
 
         public NotFoundException(string entityName, object key) 
-            : base($"A entidade '{entityName}' com a chave '{key}' não foi encontrada.")
+            : base($"The entity '{entityName}' with key '{key}' was not found.")
         { }
     }
 }
