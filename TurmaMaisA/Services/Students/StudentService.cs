@@ -54,7 +54,7 @@ namespace TurmaMaisA.Services.Students
         public async Task UpdateAsync(StudentUpdateDto dto)
         {
             var entity = await _repository.GetByIdAsync(dto.Id) ??
-                throw new NotFoundException("Student", id);
+                throw new NotFoundException("Student", dto.Id);
 
             entity.Name  = dto.Name;
             entity.Email = dto.Email;
