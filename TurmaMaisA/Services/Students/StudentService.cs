@@ -1,7 +1,9 @@
 ﻿using TurmaMaisA.Models;
 using TurmaMaisA.Persistence.Interfaces;
+using TurmaMaisA.Persistence.Repositories.Courses;
 using TurmaMaisA.Persistence.Repositories.Students;
 using TurmaMaisA.Services.Students.Dtos;
+using TurmaMaisA.Utils.Exceptions;
 
 namespace TurmaMaisA.Services.Students
 {
@@ -10,7 +12,9 @@ namespace TurmaMaisA.Services.Students
         private readonly IStudentRepository _repository;
         private readonly IUnitOfWork _uow;
 
-        public StudentService(IStudentRepository repository, IUnitOfWork uow)
+        public StudentService(IStudentRepository repository, 
+            IUnitOfWork uow
+            )
         {
             _repository = repository;
             _uow = uow;

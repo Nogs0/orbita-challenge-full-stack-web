@@ -14,6 +14,7 @@ using TurmaMaisA.Persistence.Repositories.Organizations;
 using TurmaMaisA.Persistence.Repositories.Students;
 using TurmaMaisA.Services.Auth;
 using TurmaMaisA.Services.Courses;
+using TurmaMaisA.Services.Enrollments;
 using TurmaMaisA.Services.Organizations;
 using TurmaMaisA.Services.Students;
 using TurmaMaisA.Services.Users;
@@ -31,6 +32,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>

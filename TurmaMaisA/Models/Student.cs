@@ -20,6 +20,9 @@ namespace TurmaMaisA.Models
 
         public Guid OrganizationId { get; set; }
         public Organization? Organization { get; set; }
+
+        public List<Enrollment> Enrollments { get; set; }
+
         public DateTime? DeletedAt { get; set; }
     }
 }

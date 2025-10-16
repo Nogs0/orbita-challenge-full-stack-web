@@ -5,5 +5,6 @@ namespace TurmaMaisA.Persistence.Repositories.Enrollments
 {
     public interface IEnrollmentRepository : IBaseRepository<Enrollment>
     {
+        Task<IEnumerable<Enrollment>> GetAllByStudentId(Guid studentId);
     }
 }
