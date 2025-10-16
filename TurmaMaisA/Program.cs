@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 using System.Text;
 using TurmaMaisA.Middlewares;
 using TurmaMaisA.Models;
@@ -100,7 +101,7 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Insira o token JWT desta forma: Bearer {seu token}"
+        Description = "Insira o token JWT:"
     });
 
     //    Isso adiciona o cadeado a todos os endpoints e informa que eles
@@ -116,9 +117,13 @@ builder.Services.AddSwaggerGen(options =>
                     Id = "Bearer"
                 }
             },
-            Array.Empty<string>() // ou new string[] {}
+            Array.Empty<string>()
         }
     });
+
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
+    options.IncludeXmlComments(xmlPath);
 });
 
 var app = builder.Build();

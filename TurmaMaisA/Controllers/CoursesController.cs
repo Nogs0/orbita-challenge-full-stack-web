@@ -18,6 +18,10 @@ namespace TurmaMaisA.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Cria um novo curso no sistema.
+        /// </summary>
+        /// <param name="dto">Objeto contendo os dados necessários para a criação do curso.</param>
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CourseCreateDto dto)
         {
@@ -31,6 +35,11 @@ namespace TurmaMaisA.Controllers
             return CreatedAtAction(nameof(GetById), new { id = course.Id }, course);
         }
 
+        /// <summary>
+        /// Atualiza as informações de um curso existente.
+        /// </summary>
+        /// <param name="id">O ID do curso a ser atualizado.</param>
+        /// <param name="dto">Objeto contendo os dados atualizados do curso.</param>
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] CourseDto dto)
         {
@@ -49,6 +58,10 @@ namespace TurmaMaisA.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Busca um curso específico pelo seu ID.
+        /// </summary>
+        /// <param name="id">O ID do curso a ser buscado.</param>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -64,7 +77,10 @@ namespace TurmaMaisA.Controllers
             return Ok(course);
         }
 
-        [HttpGet()]
+        /// <summary>
+        /// Retorna uma lista com todos os cursos cadastrados.
+        /// </summary>
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             _logger.LogInformation("Fetching all courses.");
@@ -72,6 +88,10 @@ namespace TurmaMaisA.Controllers
             return Ok(courses);
         }
 
+        /// <summary>
+        /// Exclui um curso do sistema.
+        /// </summary>
+        /// <param name="id">O ID do curso a ser excluído.</param>
         [HttpDelete]
         public async Task<IActionResult> Delete(Guid id)
         {

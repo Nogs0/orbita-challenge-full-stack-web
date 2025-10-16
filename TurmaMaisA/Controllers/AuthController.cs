@@ -15,6 +15,10 @@ namespace TurmaMaisA.Controllers
             _service = service;
         }
 
+        /// <summary>
+        /// Realiza o login do usuário e retorna um token JWT.
+        /// </summary>
+        /// <param name="dto">Objeto com as credenciais de email e senha.</param>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO dto)
         {
@@ -29,6 +33,10 @@ namespace TurmaMaisA.Controllers
             return Unauthorized(new { message = result.ErrorMessage });
         }
 
+        /// <summary>
+        /// Realiza o cadastro de um novo usuário e retorna um token para login automático.
+        /// </summary>
+        /// <param name="dto">Objeto com os dados necessários para o cadastro.</param>
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {

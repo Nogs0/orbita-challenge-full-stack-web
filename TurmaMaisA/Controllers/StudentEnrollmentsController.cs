@@ -19,6 +19,11 @@ namespace TurmaMaisA.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Define ou sincroniza a lista de matrículas para um estudante específico.
+        /// </summary>
+        /// <param name="studentId">O ID do estudante cujas matrículas serão definidas.</param>
+        /// <param name="dto">Objeto contendo o ID do estudante e a lista completa dos IDs dos cursos.</param>
         [HttpPut]
         public async Task<IActionResult> SetEnrollments(Guid studentId, [FromBody] EnrollmentCreateDto dto)
         {
@@ -32,6 +37,10 @@ namespace TurmaMaisA.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Busca todas as matrículas associadas a um estudante específico.
+        /// </summary>
+        /// <param name="studentId">O ID do estudante para o qual as matrículas serão buscadas.</param>
         [HttpGet]
         public async Task<IActionResult> GetEnrollmentsByStudentId(Guid studentId)
         {
