@@ -1,7 +1,9 @@
-﻿using TurmaMaisA.Models;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using TurmaMaisA.Models;
 using TurmaMaisA.Persistence.Interfaces;
 using TurmaMaisA.Persistence.Repositories.Courses;
 using TurmaMaisA.Services.Courses.Dtos;
+using TurmaMaisA.Utils.Exceptions;
 
 namespace TurmaMaisA.Services.Courses
 {
@@ -38,7 +40,7 @@ namespace TurmaMaisA.Services.Courses
         public async Task<CourseDto> GetByIdAsync(Guid id)
         {
             var entity = await _repository.GetByIdAsync(id) ??
-                throw new Exception($"Course with id: {id} not found.");
+                throw new NotFoundException("Course", id);
 
             return new CourseDto(entity);
         }
@@ -46,7 +48,7 @@ namespace TurmaMaisA.Services.Courses
         public async Task UpdateAsync(CourseDto dto)
         {
             var entity = await _repository.GetByIdAsync(dto.Id) ??
-                throw new Exception($"Course with id: {dto.Id} not found.");
+                throw new NotFoundException("Course", dto.Id);
 
             entity.Name = dto.Name;
 
@@ -57,7 +59,7 @@ namespace TurmaMaisA.Services.Courses
         public async Task DeleteAsync(Guid id)
         {
             var entity = await _repository.GetByIdAsync(id) ??
-                throw new Exception($"Course with id: {id} not found.");
+                throw new NotFoundException("Course", id);
 
             _repository.Delete(entity);
             await _uow.SaveChangesAsync();

@@ -46,7 +46,7 @@ namespace TurmaMaisA.Services.Students
         public async Task<StudentDto> GetByIdAsync(Guid id)
         {
             var entity = await _repository.GetByIdAsync(id) ??
-                throw new Exception($"Student with id: {id} not found.");
+                throw new NotFoundException("Student", id);
 
             return new StudentDto(entity);
         }
@@ -54,8 +54,8 @@ namespace TurmaMaisA.Services.Students
         public async Task UpdateAsync(StudentUpdateDto dto)
         {
             var entity = await _repository.GetByIdAsync(dto.Id) ??
-                throw new Exception($"Student with id: {dto.Id} not found.");
-            
+                throw new NotFoundException("Student", id);
+
             entity.Name  = dto.Name;
             entity.Email = dto.Email;
 
@@ -66,7 +66,7 @@ namespace TurmaMaisA.Services.Students
         public async Task DeleteAsync(Guid id)
         {
             var entity = await _repository.GetByIdAsync(id) ??
-                throw new Exception($"Student with id: {id} not found.");
+                throw new NotFoundException("Student", id);
 
             _repository.Delete(entity);
             await _uow.SaveChangesAsync();

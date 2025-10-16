@@ -40,6 +40,11 @@ namespace TurmaMaisA.Middlewares.ExceptionHandling
                         responseBody = new { message = notFoundException.Message };
                         break;
 
+                    case BusinessRuleException businessRuleException:
+                        httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                        responseBody = new { message = businessRuleException.Message };
+                        break;
+
                     default:
                         httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                                                                                                    
