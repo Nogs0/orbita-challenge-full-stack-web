@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using System.Text.Json;
-using TurmaMaisA.Middlewares.ExceptionHandling.Dtos;
+using TurmaMaisA.Utils.Exceptions;
 
 namespace TurmaMaisA.Middlewares.ExceptionHandling
 {
@@ -31,23 +31,26 @@ namespace TurmaMaisA.Middlewares.ExceptionHandling
                 _logger.LogError(ex, "Unhandled exception: {Message}", ex.Message);
 
                 httpContext.Response.ContentType = "application/json";
-                httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                object responseBody = new { message = "Ocorreu um erro interno no servidor." };
 
-                var response = _env.IsDevelopment()
-                    ? new ExceptionHandlingDto()
-                    {
-                        StatusCode = httpContext.Response.StatusCode,
-                        Message = "Internal server error. Details: " + ex.Message,
-                        Details = ex.StackTrace
-                    }
-                    : new ExceptionHandlingDto()
-                    {
-                        StatusCode = httpContext.Response.StatusCode,
-                        Message = "Internal server error."
-                    };
+                switch (ex)
+                {
+                    case NotFoundException notFoundException:
+                        httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                        responseBody = new { message = notFoundException.Message };
+                        break;
 
-                var jsonResponse = JsonSerializer.Serialize(response);
+                    default:
+                        httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                                                                                                   
+                        if (_env.IsDevelopment())
+                        {
+                            responseBody = new { message = ex.Message, details = ex.StackTrace };
+                        }
+                        break;
+                }
 
+                var jsonResponse = JsonSerializer.Serialize(responseBody);
                 await httpContext.Response.WriteAsync(jsonResponse);
             }
         }
