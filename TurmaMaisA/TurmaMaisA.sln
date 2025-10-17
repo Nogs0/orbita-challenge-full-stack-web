@@ -1,11 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36518.9 d17.14
+VisualStudioVersion = 17.14.36518.9
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TurmaMaisA", "TurmaMaisA.csproj", "{8E8DED83-189B-4B2C-8DFA-B7E10CB18B91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TurmaMaisA", "src\TurmaMaisA.csproj", "{8E8DED83-189B-4B2C-8DFA-B7E10CB18B91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TurmaMaisA.Test", "..\TurmaMaisA.Test\TurmaMaisA.Test.csproj", "{429477F0-0D78-414E-BE15-1C57D6820034}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TurmaMaisA.Test", "tests\TurmaMaisA.Test.csproj", "{429477F0-0D78-414E-BE15-1C57D6820034}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{379DA502-88BF-4D49-9210-A8D450CC82A9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5ADD24F5-78F2-4B5E-944E-BFF4415E6C26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +28,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8E8DED83-189B-4B2C-8DFA-B7E10CB18B91} = {379DA502-88BF-4D49-9210-A8D450CC82A9}
+		{429477F0-0D78-414E-BE15-1C57D6820034} = {5ADD24F5-78F2-4B5E-944E-BFF4415E6C26}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8B8F9B03-C462-4732-871D-4DC60835251F}
