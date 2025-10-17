@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using TurmaMaisA.Models;
+﻿using TurmaMaisA.Models;
 using TurmaMaisA.Persistence.Interfaces;
 using TurmaMaisA.Persistence.Repositories.Courses;
 using TurmaMaisA.Services.Courses.Dtos;
@@ -45,7 +44,7 @@ namespace TurmaMaisA.Services.Courses
             return new CourseDto(entity);
         }
 
-        public async Task UpdateAsync(CourseDto dto)
+        public async Task UpdateAsync(CourseUpdateDto dto)
         {
             var entity = await _repository.GetByIdAsync(dto.Id) ??
                 throw new NotFoundException("Course", dto.Id);

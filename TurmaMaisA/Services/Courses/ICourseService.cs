@@ -4,7 +4,7 @@ using TurmaMaisA.Services.Shared;
 
 namespace TurmaMaisA.Services.Courses
 {
-    public interface ICourseService : IBaseServiceCrud<Course, CourseDto, CourseDto, CourseCreateDto, CourseDto>
+    public interface ICourseService : IBaseServiceCrud<Course, CourseDto, CourseDto, CourseCreateDto, CourseUpdateDto>
     {
     }
 }

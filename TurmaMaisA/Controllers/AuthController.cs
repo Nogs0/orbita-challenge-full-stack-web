@@ -20,7 +20,7 @@ namespace TurmaMaisA.Controllers
         /// </summary>
         /// <param name="dto">Objeto com as credenciais de email e senha.</param>
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDTO dto)
+        public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

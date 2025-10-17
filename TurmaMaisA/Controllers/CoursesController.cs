@@ -41,7 +41,7 @@ namespace TurmaMaisA.Controllers
         /// <param name="id">O ID do curso a ser atualizado.</param>
         /// <param name="dto">Objeto contendo os dados atualizados do curso.</param>
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] CourseDto dto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] CourseUpdateDto dto)
         {
             if (id != dto.Id)
             {

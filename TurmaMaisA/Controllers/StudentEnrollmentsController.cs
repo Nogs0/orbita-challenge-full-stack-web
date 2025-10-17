@@ -33,8 +33,9 @@ namespace TurmaMaisA.Controllers
             }
 
             _logger.LogInformation($"Creating enrollments to student with ID: {dto.StudentId}", dto.StudentId);
-            await _service.SetEnrolllmentsAsync(dto);
-            return NoContent();
+            var enrollments = await _service.SetEnrolllmentsAsync(dto);
+            var result = enrollments.Select(e => new EnrollmentDto(e)).ToList();
+            return Ok(result);
         }
 
         /// <summary>

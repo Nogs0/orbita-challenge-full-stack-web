@@ -2,7 +2,7 @@
 
 namespace TurmaMaisA.Services.Auth.Dtos
 {
-    public class LoginDTO
+    public class LoginDto
     {
         [Required(ErrorMessage = "The 'Username' is required")]
         public required string Username { get; set; }

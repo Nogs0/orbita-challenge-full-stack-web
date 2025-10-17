@@ -26,12 +26,12 @@ namespace TurmaMaisA.Services.Auth
             _logger = logger;
         }
 
-        public async Task<AuthResultDto> LoginAsync(LoginDTO dto)
+        public async Task<AuthResultDto> LoginAsync(LoginDto dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.Username);
             if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password))
             {
-                return new AuthResultDto { IsSuccess = false, ErrorMessage = "Usuário ou senha inválidos." };
+                return new AuthResultDto { IsSuccess = false, ErrorMessage = "Incorrect username or password." };
             }
 
             var tokenDetails = GenerateJwtToken(user);
@@ -48,7 +48,7 @@ namespace TurmaMaisA.Services.Auth
         {
             var userExists = await _userManager.FindByEmailAsync(dto.Email);
             if (userExists != null)
-                throw new BusinessRuleException("Email já cadastrado.");
+                throw new BusinessRuleException("Email already registered.");
 
             var organization = new Organization()
             {
@@ -75,7 +75,7 @@ namespace TurmaMaisA.Services.Auth
                 };
             }
             
-            _logger.LogInformation($"Usuário {user.Email} criado com sucesso. Gerando token de login.", user.Email);
+            _logger.LogInformation($"User {user.Email} created with success. Generating login token.", user.Email);
 
             var tokenDetails = GenerateJwtToken(user);
 
@@ -90,7 +90,7 @@ namespace TurmaMaisA.Services.Auth
         private (string tokenString, DateTime expiration) GenerateJwtToken(User user)
         {
             if (string.IsNullOrEmpty(user.UserName))
-                throw new BusinessRuleException("O email do usuário é obrigatório.");
+                throw new BusinessRuleException("The user email is required.");
 
             var authClaims = new List<Claim>
             {
@@ -98,8 +98,6 @@ namespace TurmaMaisA.Services.Auth
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim("OrganizationId", user.OrganizationId.ToString())
             };
-
-            // TO DO: Lógica para buscar e adicionar roles...
 
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
 

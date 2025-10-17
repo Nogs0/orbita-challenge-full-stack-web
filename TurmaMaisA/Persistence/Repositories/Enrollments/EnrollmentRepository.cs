@@ -14,7 +14,7 @@ namespace TurmaMaisA.Persistence.Repositories.Enrollments
             _enrollments = context.Set<Enrollment>();
         }
 
-        public async Task<IEnumerable<Enrollment>> GetAllByStudentId(Guid studentId)
+        public async Task<List<Enrollment>> GetAllByStudentId(Guid studentId)
         {
             return await _enrollments.Where(x => x.StudentId == studentId).ToListAsync();
         }

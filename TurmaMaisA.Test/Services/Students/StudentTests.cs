@@ -14,16 +14,17 @@ namespace TurmaMaisA.Test.Services.Students
 
         private readonly IStudentService _service;
         private readonly Mock<IStudentRepository> _mockRepository;
+        private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
         public StudentTests()
         {
             _mockRepository = new Mock<IStudentRepository>();
-            var uow = new Mock<IUnitOfWork>();
-            _service = new StudentService(_mockRepository.Object, uow.Object);
+            _mockUnitOfWork = new Mock<IUnitOfWork>();
+            _service = new StudentService(_mockRepository.Object, _mockUnitOfWork.Object);
         }
 
-        [Fact(DisplayName = "Create_WithValidInput")]
-        public async Task Create_WithValidInput_ShouldReturnCorrectResult()
+        [Fact(DisplayName = "Create With Valid Input Should Return Correct Result")]
+        public async Task Create_WhenValidInput_ShouldReturnCorrectResult()
         {
             //Arrange
             var newStudentDto = new StudentCreateDto()
@@ -63,6 +64,7 @@ namespace TurmaMaisA.Test.Services.Students
                 s.Cpf == submitedStudent.Cpf &&
                 s.RA == submitedStudent.RA
             )), Times.Once);
+            _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact(DisplayName = "Create When Cpf Is Invalid Should Throw BusinessRoleException")]
@@ -83,7 +85,7 @@ namespace TurmaMaisA.Test.Services.Students
             Assert.Equal(expectedMessage, exception.Message);
         }
 
-        [Fact(DisplayName = "Get By Id When Student Exists Should Return StudentDto")]
+        [Fact(DisplayName = "GetById When Student Exists Should Return StudentDto")]
         public async Task Get_WithExistentId_ShouldReturnStudentDto()
         {
             //Arrange
@@ -108,14 +110,13 @@ namespace TurmaMaisA.Test.Services.Students
             Assert.Equal(result.Id, studentId);
         }
 
-        [Fact(DisplayName = "Get By Id When Student Not Exists Should Throw NotFoundException")]
+        [Fact(DisplayName = "GetById When Student Not Exists Should Throw NotFoundException")]
         public async Task Get_WithNonExistentId_ShouldThrowNotFoundException()
         {
             //Arrange
             var nonExistentStudentId = Guid.NewGuid();
-            Student? nullStudent = null;
 
-            _mockRepository.Setup(r => r.GetByIdAsync(nonExistentStudentId)).Returns(Task.FromResult(nullStudent));
+            _mockRepository.Setup(r => r.GetByIdAsync(nonExistentStudentId)).Returns(Task.FromResult((Student?)null));
             var expectedMessage = $"The entity 'Student' with key '{nonExistentStudentId}' was not found.";
 
             //Act & Assert
@@ -123,8 +124,44 @@ namespace TurmaMaisA.Test.Services.Students
             Assert.Equal(expectedMessage, exception.Message);
         }
 
-        [Fact(DisplayName = "Update_WithValidInput")]
-        public async Task Update_WithValidInput_ShouldReturnCorrectResult()
+        [Fact(DisplayName = "GetAll When Students Exist Should Return StudentDto List")]
+        public async Task GetAllAsync_WhenStudentsExist_ShouldReturnStudentDtoList()
+        {
+            // Arrange
+            var studentsFromRepo = new List<Student>
+            {
+                new Student { Id = Guid.NewGuid(), Name = "João", Cpf = "",  RA = "1", Email = "joao@teste.com"},
+                new Student { Id = Guid.NewGuid(), Name = "Maria", Cpf = "", RA = "2", Email = "maria@teste.com"}
+            };
+
+            _mockRepository.Setup(r => r.GetAllAsync(null)).ReturnsAsync(studentsFromRepo);
+
+            // Act
+            var result = await _service.GetAllAsync();
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count());
+        }
+
+        [Fact(DisplayName = "GetAll When No Students Exist Should Return Empty List")]
+        public async Task GetAllAsync_WhenNoStudentsExist_ShouldReturnEmptyList()
+        {
+            // Arrange
+            var emptyListFromRepo = new List<Student>();
+
+            _mockRepository.Setup(r => r.GetAllAsync(null)).ReturnsAsync(emptyListFromRepo);
+
+            // Act
+            var result = await _service.GetAllAsync();
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Empty(result);
+        }
+
+        [Fact(DisplayName = "Update When Valid Input Should Return Correct Result")]
+        public async Task Update_WhenValidInput_ShouldReturnCorrectResult()
         {
             //Arrange
             var studentId = Guid.NewGuid();
@@ -158,10 +195,11 @@ namespace TurmaMaisA.Test.Services.Students
                 s.Cpf == dbStudent.Cpf &&
                 s.RA == dbStudent.RA
             )), Times.Once);
+            _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
-        [Fact(DisplayName = "Update_WhenStudentNotFound")]
-        public async Task Update_WithNotFoundId_ShouldThrowNotFoundException()
+        [Fact(DisplayName = "Update When Student Not Found Should Throw NotFoundException")]
+        public async Task Update_WhenNotFoundId_ShouldThrowNotFoundException()
         {
             //Arrange
             var nonExistentStudentId = Guid.NewGuid();

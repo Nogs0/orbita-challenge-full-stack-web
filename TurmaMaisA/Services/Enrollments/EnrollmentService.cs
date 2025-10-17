@@ -26,19 +26,19 @@ namespace TurmaMaisA.Services.Enrollments
             _courseRepository = courseRepository;
         }
 
-        public async Task SetEnrolllmentsAsync(SetStudentEnrollmentsDto dto)
+        public async Task<List<Enrollment>> SetEnrolllmentsAsync(SetStudentEnrollmentsDto dto)
         {
             var student = await _studentRepository.GetByIdAsync(dto.StudentId) ??
                 throw new NotFoundException("Student", dto.StudentId);
 
             if (dto.CoursesIds == null || dto.CoursesIds.Count == 0)
-                return;
+                throw new BusinessRuleException("The CoursesIds must not be null or empty.");
 
             var coursesToEnroll = await _courseRepository.GetByIdsAsync(dto.CoursesIds);
 
             var notFoundCourses = dto.CoursesIds.Where(dtoCId => !coursesToEnroll.Select(c => c.Id).Contains(dtoCId));
             if (notFoundCourses.Any())
-                throw new NotFoundException($"Os seguintes IDs de curso não foram encontrados: {string.Join(", ", notFoundCourses)}");
+                throw new NotFoundException($"The courses with the following keys are not found: {string.Join(", ", notFoundCourses)}");
 
             student.Enrollments ??= new List<Enrollment>();
             
@@ -52,11 +52,13 @@ namespace TurmaMaisA.Services.Enrollments
                 student.Enrollments.Add(new Enrollment
                 {
                     Student = student,
-                    Course = course
+                    Course = course,
+                    CourseId = course.Id
                 });
             }
 
             await _uow.SaveChangesAsync();
+            return student.Enrollments;
         }
 
         public async Task<List<EnrollmentDto>> GetByStudentIdAsync(Guid studentId)
