@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TurmaMaisA\TurmaMaisA.csproj" />
+    <ProjectReference Include="..\src\TurmaMaisA.csproj" />
   </ItemGroup>
 
 </Project>
