@@ -26,17 +26,17 @@ namespace TurmaMaisA.Services.Auth
             _logger = logger;
         }
 
-        public async Task<AuthDto> LoginAsync(LoginDTO dto)
+        public async Task<AuthResultDto> LoginAsync(LoginDTO dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.Username);
             if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password))
             {
-                return new AuthDto { IsSuccess = false, ErrorMessage = "Usuário ou senha inválidos." };
+                return new AuthResultDto { IsSuccess = false, ErrorMessage = "Usuário ou senha inválidos." };
             }
 
             var tokenDetails = GenerateJwtToken(user);
 
-            return new AuthDto
+            return new AuthResultDto
             {
                 IsSuccess = true,
                 Token = tokenDetails.tokenString,
@@ -44,7 +44,7 @@ namespace TurmaMaisA.Services.Auth
             };
         }
 
-        public async Task<AuthDto> RegisterUserAsync(RegisterDto dto)
+        public async Task<AuthResultDto> RegisterUserAsync(RegisterDto dto)
         {
             var userExists = await _userManager.FindByEmailAsync(dto.Email);
             if (userExists != null)
@@ -68,7 +68,7 @@ namespace TurmaMaisA.Services.Auth
 
             if (!result.Succeeded)
             {
-                return new AuthDto
+                return new AuthResultDto
                 {
                     IsSuccess = false,
                     ErrorMessage = string.Join(",", result.Errors.Select(e => e.Description).ToArray())
@@ -79,7 +79,7 @@ namespace TurmaMaisA.Services.Auth
 
             var tokenDetails = GenerateJwtToken(user);
 
-            return new AuthDto
+            return new AuthResultDto
             {
                 IsSuccess = true,
                 Token = tokenDetails.tokenString,

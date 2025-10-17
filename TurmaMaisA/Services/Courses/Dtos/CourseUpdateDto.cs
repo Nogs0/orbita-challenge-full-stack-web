@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TurmaMaisA.Services.Students.Dtos
+namespace TurmaMaisA.Services.Courses.Dtos
 {
-    public class StudentUpdateDto
+    public class CourseUpdateDto
     {
         [Required(ErrorMessage = "The 'Id' is required")]
         public Guid Id { get; set; }
@@ -11,8 +11,5 @@ namespace TurmaMaisA.Services.Students.Dtos
         [MaxLength(128)]
         public required string Name { get; set; }
 
-        [Required(ErrorMessage = "The 'Email' is required")]
-        [MaxLength(128)]
-        public required string Email { get; set; }
     }
 }

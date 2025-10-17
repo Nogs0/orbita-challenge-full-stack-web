@@ -4,10 +4,10 @@ namespace TurmaMaisA.Services.Auth.Dtos
 {
     public class LoginDTO
     {
-        [Required(ErrorMessage = "O usuário é obrigatório.")]
+        [Required(ErrorMessage = "The 'Username' is required")]
         public required string Username { get; set; }
 
-        [Required(ErrorMessage = "A senha é obrigatória.")]
+        [Required(ErrorMessage = "The 'Password' is required")]
         public required string Password { get; set; }
     }
 }

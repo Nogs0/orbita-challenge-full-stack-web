@@ -4,7 +4,7 @@ namespace TurmaMaisA.Services.Auth
 {
     public interface IAuthService
     {
-        Task<AuthDto> LoginAsync(LoginDTO dto);
-        Task<AuthDto> RegisterUserAsync(RegisterDto dto);
+        Task<AuthResultDto> LoginAsync(LoginDTO dto);
+        Task<AuthResultDto> RegisterUserAsync(RegisterDto dto);
     }
 }

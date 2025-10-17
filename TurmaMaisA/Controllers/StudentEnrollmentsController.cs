@@ -25,7 +25,7 @@ namespace TurmaMaisA.Controllers
         /// <param name="studentId">O ID do estudante cujas matrículas serão definidas.</param>
         /// <param name="dto">Objeto contendo o ID do estudante e a lista completa dos IDs dos cursos.</param>
         [HttpPut]
-        public async Task<IActionResult> SetEnrollments(Guid studentId, [FromBody] EnrollmentCreateDto dto)
+        public async Task<IActionResult> SetEnrollments(Guid studentId, [FromBody] SetStudentEnrollmentsDto dto)
         {
             if (studentId != dto.StudentId)
             {

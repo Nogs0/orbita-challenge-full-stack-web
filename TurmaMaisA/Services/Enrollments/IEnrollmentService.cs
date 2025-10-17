@@ -5,6 +5,6 @@ namespace TurmaMaisA.Services.Enrollments
     public interface IEnrollmentService
     {
         Task<List<EnrollmentDto>> GetByStudentIdAsync(Guid studentId);
-        Task SetEnrolllmentsAsync(EnrollmentCreateDto dto);
+        Task SetEnrolllmentsAsync(SetStudentEnrollmentsDto dto);
     }
 }

@@ -26,7 +26,7 @@ namespace TurmaMaisA.Services.Enrollments
             _courseRepository = courseRepository;
         }
 
-        public async Task SetEnrolllmentsAsync(EnrollmentCreateDto dto)
+        public async Task SetEnrolllmentsAsync(SetStudentEnrollmentsDto dto)
         {
             var student = await _studentRepository.GetByIdAsync(dto.StudentId) ??
                 throw new NotFoundException("Student", dto.StudentId);

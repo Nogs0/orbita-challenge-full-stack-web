@@ -1,6 +1,6 @@
 ﻿namespace TurmaMaisA.Services.Auth.Dtos
 {
-    public class AuthDto
+    public class AuthResultDto
     {
         public bool IsSuccess { get; set; }
         public string? Token { get; set; }

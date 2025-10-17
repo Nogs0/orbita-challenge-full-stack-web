@@ -4,20 +4,20 @@ namespace TurmaMaisA.Services.Auth.Dtos
 {
     public class RegisterDto
     {
-        [Required(ErrorMessage = "O nome completo é obrigatório.")]
+        [Required(ErrorMessage = "The 'FullName' is required")]
         public required string FullName { get; set; }
 
-        [Required(ErrorMessage = "O email é obrigatório.")]
-        [EmailAddress(ErrorMessage = "O formato do email é inválido.")]
+        [Required(ErrorMessage = "The 'Email' is required.")]
+        [EmailAddress(ErrorMessage = "The email format is invalid.")]
         public required string Email { get; set; }
 
-        [Required(ErrorMessage = "A senha é obrigatória.")]
+        [Required(ErrorMessage = "The 'Password' is required.")]
         public required string Password { get; set; }
 
-        [Compare("Password", ErrorMessage = "As senhas não conferem.")]
+        [Compare("Password", ErrorMessage = "The passwords do not match.")]
         public required string ConfirmPassword { get; set; }
 
-        [Required(ErrorMessage = "O nome da organização é obrigatório.")]
+        [Required(ErrorMessage = "The 'OrganizationName' is required")]
         public required string OrganizationName { get; set; }
     }
 }
