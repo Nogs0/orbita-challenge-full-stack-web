@@ -15,7 +15,8 @@ import { createApp } from 'vue'
 
 // Styles
 import 'unfonts.css'
-
+import axios from 'axios';
+axios.defaults.baseURL = 'https://localhost:7047/api';
 const app = createApp(App)
 
 registerPlugins(app)

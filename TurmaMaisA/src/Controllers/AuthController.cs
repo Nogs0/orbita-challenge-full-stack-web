@@ -28,9 +28,9 @@ namespace TurmaMaisA.Controllers
             var result = await _service.LoginAsync(dto);
 
             if (result.IsSuccess)
-                return Ok(new { token = result.Token, expiration = result.TokenExpiration });
+                return Ok(result);
 
-            return Unauthorized(new { message = result.ErrorMessage });
+            return Unauthorized(result);
         }
 
         /// <summary>
@@ -45,10 +45,10 @@ namespace TurmaMaisA.Controllers
 
             var result = await _service.RegisterUserAsync(dto);
 
-            if (result.IsSuccess)
-                return Ok(new { token = result.Token, expiration = result.TokenExpiration });
+            if(result.IsSuccess)
+                return Ok(result);
 
-            return BadRequest(new { errors = result.ErrorMessage });
+            return Unauthorized(result);
         }
     }
 }

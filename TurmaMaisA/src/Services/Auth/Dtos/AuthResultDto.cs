@@ -6,5 +6,7 @@
         public string? Token { get; set; }
         public string? ErrorMessage { get; set; }
         public DateTime TokenExpiration { get; set; }
+        public string? UserFullName { get; set; }
+        public string? OrganizationName { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using TurmaMaisA.Models;
+using TurmaMaisA.Persistence.Repositories.Organizations;
 using TurmaMaisA.Services.Auth.Dtos;
 using TurmaMaisA.Utils.Exceptions;
 using TurmaMaisA.Utils.Settings;
@@ -16,14 +17,17 @@ namespace TurmaMaisA.Services.Auth
         private readonly UserManager<User> _userManager;
         private readonly JwtSettings _jwtSettings;
         private readonly ILogger<AuthService> _logger;
+        private readonly IOrganizationRepository _organizationRepository;
 
-        public AuthService(UserManager<User> userManager, 
+        public AuthService(UserManager<User> userManager,
             IOptions<JwtSettings> _optionsJwtSettings,
-            ILogger<AuthService> logger)
+            ILogger<AuthService> logger,
+            IOrganizationRepository organizationRepository)
         {
             _userManager = userManager;
             _jwtSettings = _optionsJwtSettings.Value;
             _logger = logger;
+            _organizationRepository = organizationRepository;
         }
 
         public async Task<AuthResultDto> LoginAsync(LoginDto dto)
@@ -34,13 +38,21 @@ namespace TurmaMaisA.Services.Auth
                 return new AuthResultDto { IsSuccess = false, ErrorMessage = "Incorrect username or password." };
             }
 
+            var organization = await _organizationRepository.GetByIdAsync(user.OrganizationId);
+            if (organization == null)
+            {
+                return new AuthResultDto { IsSuccess = false, ErrorMessage = "Organization not found." };
+            }
+
             var tokenDetails = GenerateJwtToken(user);
 
             return new AuthResultDto
             {
                 IsSuccess = true,
                 Token = tokenDetails.tokenString,
-                TokenExpiration = tokenDetails.expiration
+                TokenExpiration = tokenDetails.expiration,
+                UserFullName = user.FullName,
+                OrganizationName = organization.Name
             };
         }
 
@@ -83,7 +95,9 @@ namespace TurmaMaisA.Services.Auth
             {
                 IsSuccess = true,
                 Token = tokenDetails.tokenString,
-                TokenExpiration = tokenDetails.expiration
+                TokenExpiration = tokenDetails.expiration,
+                UserFullName = user.FullName,
+                OrganizationName = organization.Name
             };
         }
 
