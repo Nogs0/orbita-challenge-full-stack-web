@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TurmaMaisA.Services.Courses;
 using TurmaMaisA.Services.Courses.Dtos;
+using TurmaMaisA.Services.Shared.Dtos;
 
 namespace TurmaMaisA.Controllers
 {
@@ -81,10 +82,10 @@ namespace TurmaMaisA.Controllers
         /// Retorna uma lista com todos os cursos cadastrados.
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] PagedInputDto dto)
         {
-            _logger.LogInformation("Fetching all courses.");
-            var courses = await _service.GetAllAsync();
+            _logger.LogInformation("Fetching courses.");
+            var courses = await _service.GetPagedItemsAsync(dto);
             return Ok(courses);
         }
 
@@ -92,7 +93,7 @@ namespace TurmaMaisA.Controllers
         /// Exclui um curso do sistema.
         /// </summary>
         /// <param name="id">O ID do curso a ser excluído.</param>
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             _logger.LogInformation($"Deleting course with ID: {id}", id);

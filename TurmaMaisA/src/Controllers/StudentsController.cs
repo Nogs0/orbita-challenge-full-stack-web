@@ -90,7 +90,7 @@ namespace TurmaMaisA.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] PagedInputDto dto)
         {
-            _logger.LogInformation("Fetching all students.");
+            _logger.LogInformation("Fetching students.");
             var pagedStudents = await _service.GetPagedItemsAsync(dto);
             return Ok(pagedStudents);
         }

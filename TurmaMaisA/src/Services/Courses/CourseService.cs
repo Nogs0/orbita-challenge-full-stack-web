@@ -1,7 +1,9 @@
-﻿using TurmaMaisA.Models;
+﻿using System.Linq.Expressions;
+using TurmaMaisA.Models;
 using TurmaMaisA.Persistence.Interfaces;
 using TurmaMaisA.Persistence.Repositories.Courses;
 using TurmaMaisA.Services.Courses.Dtos;
+using TurmaMaisA.Services.Shared.Dtos;
 using TurmaMaisA.Utils.Exceptions;
 
 namespace TurmaMaisA.Services.Courses
@@ -34,6 +36,20 @@ namespace TurmaMaisA.Services.Courses
         {
             var courses = await _repository.GetAllAsync();
             return courses.Select(c => new CourseDto(c));
+        }
+
+        public async Task<PagedResultDto<CourseDto>> GetPagedItemsAsync(PagedInputDto dto)
+        {
+            Expression<Func<Course, bool>>? searchExp = null;
+
+            if (!string.IsNullOrEmpty(dto.Search))
+            {
+                searchExp = (s) =>
+                s.Name.Trim().Contains(dto.Search, StringComparison.CurrentCultureIgnoreCase);
+            }
+
+            var result = await _repository.GetPagedItemsAsync(dto.PageNumber, dto.PageSize, searchExp);
+            return new PagedResultDto<CourseDto>(result.Items.Select(x => new CourseDto(x)).ToList(), result.TotalCount);
         }
 
         public async Task<CourseDto> GetByIdAsync(Guid id)
