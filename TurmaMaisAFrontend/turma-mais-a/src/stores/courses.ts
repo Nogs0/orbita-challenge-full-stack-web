@@ -63,6 +63,21 @@ export const useCourseStore = defineStore('Courses', {
                 this.loadingList = false;
             }
         },
+        async fetchAllCourses(): Promise<CourseDto[]> {
+            this.loadingList = true;
+            this.error = null;
+            try {
+                const response = await axios.get<CourseDto[]>('/Courses/all');
+                return response.data;
+            } catch (err) {
+                showSnackbar('Não foi possível carregar os cursos.', 'error');
+                this.error = 'Não foi possível carregar os cursos.';
+                console.error(err);
+                return [];
+            } finally {
+                this.loadingList = false;
+            }
+        },
         async fetchCourseById(id: string): Promise<void> {
             this.loadingItem = true;
             this.error = null;

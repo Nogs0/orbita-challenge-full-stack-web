@@ -3,7 +3,7 @@
     v-model="isVisible"
     :color="color"
     timeout="2000"
-    location="top right"
+    location="bottom right"
     variant="elevated"
   >
     {{ text }}
