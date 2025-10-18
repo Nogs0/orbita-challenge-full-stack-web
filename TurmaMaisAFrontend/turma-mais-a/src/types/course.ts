@@ -1,0 +1,15 @@
+export interface CourseState {
+    courses: CourseDto[],
+    loading: boolean,
+    error: string | null,
+    course: CourseDto | null
+}
+
+export interface CourseCreateDto {
+    name: string;
+}
+
+export interface CourseDto {
+    id: string;
+    name: string;
+}
