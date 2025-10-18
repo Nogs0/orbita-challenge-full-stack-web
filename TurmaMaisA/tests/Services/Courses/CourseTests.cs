@@ -66,7 +66,7 @@ namespace TurmaMaisA.Test.Services.Courses
                 Name = "Algoritmo e Estrutura de Dados I"
             };
 
-            _mockRepository.Setup(r => r.GetByIdAsync(courseId)).Returns(Task.FromResult(returnedCourse));
+            _mockRepository.Setup(r => r.GetByIdAsync(courseId)).ReturnsAsync(returnedCourse);
 
             //Act
             var result = await _service.GetByIdAsync(courseId);
@@ -84,7 +84,7 @@ namespace TurmaMaisA.Test.Services.Courses
             var nonExistentCourseId = Guid.NewGuid();
             Course? nullCourse = null;
 
-            _mockRepository.Setup(r => r.GetByIdAsync(nonExistentCourseId)).Returns(Task.FromResult(nullCourse));
+            _mockRepository.Setup(r => r.GetByIdAsync(nonExistentCourseId)).ReturnsAsync(nullCourse);
             var expectedMessage = $"The entity 'Course' with key '{nonExistentCourseId}' was not found.";
 
             //Act & Assert
@@ -145,7 +145,7 @@ namespace TurmaMaisA.Test.Services.Courses
                 Name = "Introdução a Ciência da Computação"
             };
 
-            _mockRepository.Setup(r => r.GetByIdAsync(courseId)).Returns(Task.FromResult(courseDb));
+            _mockRepository.Setup(r => r.GetByIdAsync(courseId)).ReturnsAsync(courseDb);
 
             //Act
             await _service.UpdateAsync(courseUpdateDto);

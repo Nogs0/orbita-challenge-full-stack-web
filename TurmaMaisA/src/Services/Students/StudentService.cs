@@ -25,7 +25,7 @@ namespace TurmaMaisA.Services.Students
         {
             bool cpfIsValid = CpfValidator.Validate(dto.Cpf);
             if (!cpfIsValid)
-                throw new BusinessRuleException("Given CPF is invalid.");
+                throw new BusinessRuleException("CPF fornecido é inválido.");
 
             var studentCount = await _repository.CountWithIgnoreQueryFiltersAsync(s => s.OrganizationId == dto.OrganizationId);
             var student = new Student()

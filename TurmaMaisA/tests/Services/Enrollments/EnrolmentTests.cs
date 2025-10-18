@@ -50,7 +50,7 @@ namespace TurmaMaisA.Test.Services.Enrollments
                 }
             };
 
-            _mockRepository.Setup(cr => cr.GetAllByStudentId(studentId)).Returns(Task.FromResult(enrollmentsByUser));
+            _mockRepository.Setup(cr => cr.GetAllByStudentId(studentId)).ReturnsAsync(enrollmentsByUser);
 
             //Act
             var result = await _service.GetByStudentIdAsync(studentId);
@@ -108,7 +108,7 @@ namespace TurmaMaisA.Test.Services.Enrollments
             };
 
             _mockCourseRepository.Setup(cr => cr.GetByIdsAsync(dto.CoursesIds)).Returns(Task.FromResult(coursesDb));
-            _mockStudentRepository.Setup(sr => sr.GetByIdAsync(studentId)).Returns(Task.FromResult(student));
+            _mockStudentRepository.Setup(sr => sr.GetByIdAsync(studentId)).ReturnsAsync(student);
 
             //Act
             var result = await _service.SetEnrolllmentsAsync(dto);
@@ -162,7 +162,7 @@ namespace TurmaMaisA.Test.Services.Enrollments
             };
 
             _mockCourseRepository.Setup(cr => cr.GetByIdsAsync(dto.CoursesIds)).Returns(Task.FromResult(coursesDb));
-            _mockStudentRepository.Setup(sr => sr.GetByIdAsync(studentId)).Returns(Task.FromResult(student));
+            _mockStudentRepository.Setup(sr => sr.GetByIdAsync(studentId)).ReturnsAsync(student);
             var expectedMessage = $"The courses with the following keys are not found: {string.Join(", ", notFoundCourses)}";
 
             //Act & Assert
@@ -192,8 +192,8 @@ namespace TurmaMaisA.Test.Services.Enrollments
                 CoursesIds = new List<Guid> { }
             };
 
-            _mockStudentRepository.Setup(sr => sr.GetByIdAsync(studentId)).Returns(Task.FromResult(student));
-            var expectedMessage = $"The CoursesIds must not be null or empty.";
+            _mockStudentRepository.Setup(sr => sr.GetByIdAsync(studentId)).ReturnsAsync(student);
+            var expectedMessage = "A lista de cursos deve conter ao menos um elemento.";
 
             //Act & Assert
             var exception = await Assert.ThrowsAsync<BusinessRuleException>(() => _service.SetEnrolllmentsAsync(dto));

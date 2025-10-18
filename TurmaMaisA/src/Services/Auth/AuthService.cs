@@ -35,22 +35,19 @@ namespace TurmaMaisA.Services.Auth
             var user = await _userManager.FindByEmailAsync(dto.Username);
             if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password))
             {
-                return new AuthResultDto { IsSuccess = false, ErrorMessage = "Incorrect username or password." };
+                return new AuthResultDto { IsSuccess = false, ErrorMessage = "Credenciais inválidas." };
             }
 
-            var organization = await _organizationRepository.GetByIdAsync(user.OrganizationId);
-            if (organization == null)
-            {
-                return new AuthResultDto { IsSuccess = false, ErrorMessage = "Organization not found." };
-            }
+            var organization = await _organizationRepository.GetByIdAsync(user.OrganizationId) ??
+                throw new NotFoundException("Organization", user.OrganizationId);
 
             var tokenDetails = GenerateJwtToken(user);
 
             return new AuthResultDto
             {
                 IsSuccess = true,
-                Token = tokenDetails.tokenString,
-                TokenExpiration = tokenDetails.expiration,
+                Token = tokenDetails.Token,
+                TokenExpiration = tokenDetails.Expiration,
                 UserFullName = user.FullName,
                 OrganizationName = organization.Name
             };
@@ -60,7 +57,7 @@ namespace TurmaMaisA.Services.Auth
         {
             var userExists = await _userManager.FindByEmailAsync(dto.Email);
             if (userExists != null)
-                throw new BusinessRuleException("Email already registered.");
+                throw new BusinessRuleException("Email já cadastrado.");
 
             var organization = new Organization()
             {
@@ -86,7 +83,7 @@ namespace TurmaMaisA.Services.Auth
                     ErrorMessage = string.Join(",", result.Errors.Select(e => e.Description).ToArray())
                 };
             }
-            
+
             _logger.LogInformation($"User {user.Email} created with success. Generating login token.", user.Email);
 
             var tokenDetails = GenerateJwtToken(user);
@@ -94,17 +91,17 @@ namespace TurmaMaisA.Services.Auth
             return new AuthResultDto
             {
                 IsSuccess = true,
-                Token = tokenDetails.tokenString,
-                TokenExpiration = tokenDetails.expiration,
+                Token = tokenDetails.Token,
+                TokenExpiration = tokenDetails.Expiration,
                 UserFullName = user.FullName,
                 OrganizationName = organization.Name
             };
         }
 
-        private (string tokenString, DateTime expiration) GenerateJwtToken(User user)
+        private TokenDetailsDto GenerateJwtToken(User user)
         {
             if (string.IsNullOrEmpty(user.UserName))
-                throw new BusinessRuleException("The user email is required.");
+                throw new BusinessRuleException("O email é obrigatório.");
 
             var authClaims = new List<Claim>
             {
@@ -118,12 +115,15 @@ namespace TurmaMaisA.Services.Auth
             var token = new JwtSecurityToken(
                 issuer: _jwtSettings.Issuer,
                 audience: _jwtSettings.Audience,
-                expires: DateTime.Now.AddHours(3),
+                expires: DateTime.Now.AddHours(6),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
 
-            return (new JwtSecurityTokenHandler().WriteToken(token), token.ValidTo);
+            return new TokenDetailsDto() {
+                Token = new JwtSecurityTokenHandler().WriteToken(token),
+                Expiration = token.ValidTo 
+            };
         }
     }
 }

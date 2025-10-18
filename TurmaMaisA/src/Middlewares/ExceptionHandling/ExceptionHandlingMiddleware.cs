@@ -37,7 +37,7 @@ namespace TurmaMaisA.Middlewares.ExceptionHandling
                 {
                     case NotFoundException notFoundException:
                         httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                        responseBody = new { message = notFoundException.Message };
+                        responseBody = new { message = "Recurso não encontrado." };
                         break;
 
                     case BusinessRuleException businessRuleException:

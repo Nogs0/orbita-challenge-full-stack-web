@@ -78,7 +78,7 @@ namespace TurmaMaisA.Test.Services.Students
                 Cpf = "000.000.000-00",
             };
 
-            var expectedMessage = "Given CPF is invalid.";
+            var expectedMessage = "CPF fornecido é inválido.";
 
             //Act & Assert
             var exception = await Assert.ThrowsAsync<BusinessRuleException>(() => _service.CreateAsync(newStudentDto));
@@ -99,7 +99,7 @@ namespace TurmaMaisA.Test.Services.Students
                 RA = "1"
             };
 
-            _mockRepository.Setup(r => r.GetByIdAsync(studentId)).Returns(Task.FromResult(returnedStudent));
+            _mockRepository.Setup(r => r.GetByIdAsync(studentId)).ReturnsAsync(returnedStudent);
 
             //Act
             var result = await _service.GetByIdAsync(studentId);
@@ -181,7 +181,7 @@ namespace TurmaMaisA.Test.Services.Students
                 Email = "joao@teste.com"
             };
 
-            _mockRepository.Setup(r => r.GetByIdAsync(studentId)).Returns(Task.FromResult(dbStudent));
+            _mockRepository.Setup(r => r.GetByIdAsync(studentId)).ReturnsAsync(dbStudent);
 
             //Act
             await _service.UpdateAsync(studentUpdatedDto);

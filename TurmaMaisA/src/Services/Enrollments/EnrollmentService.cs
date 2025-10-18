@@ -32,7 +32,7 @@ namespace TurmaMaisA.Services.Enrollments
                 throw new NotFoundException("Student", dto.StudentId);
 
             if (dto.CoursesIds == null || dto.CoursesIds.Count == 0)
-                throw new BusinessRuleException("The CoursesIds must not be null or empty.");
+                throw new BusinessRuleException("A lista de cursos deve conter ao menos um elemento.");
 
             var coursesToEnroll = await _courseRepository.GetByIdsAsync(dto.CoursesIds);
 

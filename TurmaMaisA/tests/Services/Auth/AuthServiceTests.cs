@@ -3,9 +3,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using TurmaMaisA.Models;
+using TurmaMaisA.Persistence.Repositories.Organizations;
 using TurmaMaisA.Services.Auth;
 using TurmaMaisA.Services.Auth.Dtos;
-using TurmaMaisA.Services.Students.Dtos;
 using TurmaMaisA.Utils.Exceptions;
 using TurmaMaisA.Utils.Settings;
 
@@ -15,7 +15,8 @@ namespace TurmaMaisA.Test.Services.Auth
     {
         private readonly Mock<UserManager<User>> _mockUserManager;
         private readonly Mock<ILogger<AuthService>> _loggerMock;
-        private readonly Mock<IOptions<JwtSettings>> _jwtSettings;
+        private readonly Mock<IOptions<JwtSettings>> _mockJwtSettings;
+        private readonly Mock<IOrganizationRepository> _mockOrganizationRepository;
         private readonly AuthService _service;
 
         public AuthServiceTests()
@@ -32,10 +33,11 @@ namespace TurmaMaisA.Test.Services.Auth
                 Audience = "TesteAudience"
             };
 
-            _jwtSettings = new Mock<IOptions<JwtSettings>>();
-            _jwtSettings.Setup(o => o.Value).Returns(jwtSettings);
+            _mockJwtSettings = new Mock<IOptions<JwtSettings>>();
+            _mockJwtSettings.Setup(o => o.Value).Returns(jwtSettings);
+            _mockOrganizationRepository = new Mock<IOrganizationRepository>();
 
-            _service = new AuthService(_mockUserManager.Object, _jwtSettings.Object, _loggerMock.Object);
+            _service = new AuthService(_mockUserManager.Object, _mockJwtSettings.Object, _loggerMock.Object, _mockOrganizationRepository.Object);
         }
 
         [Fact(DisplayName = "Login When Credentials Are Valid Should Return Success")]
@@ -43,12 +45,16 @@ namespace TurmaMaisA.Test.Services.Auth
         {
             // Arrange
             var loginDto = new LoginDto { Username = "joao@teste.com", Password = "Password123!" };
-            var user = new User { FullName = "João Guilherme", Email = loginDto.Username, UserName = loginDto.Username };
+            var organizationId = Guid.NewGuid();
+            var organization = new Organization { Id = organizationId, Name = "UniEsquina" };
+            var user = new User { FullName = "João Guilherme", Email = loginDto.Username, UserName = loginDto.Username, OrganizationId = organizationId };
 
             _mockUserManager.Setup(um => um.FindByEmailAsync(loginDto.Username))
                             .ReturnsAsync(user);
             _mockUserManager.Setup(um => um.CheckPasswordAsync(user, loginDto.Password))
                             .ReturnsAsync(true);
+            _mockOrganizationRepository.Setup(or => or.GetByIdAsync(organizationId))
+                            .ReturnsAsync(organization);
 
             // Act
             var result = await _service.LoginAsync(loginDto);
@@ -79,7 +85,7 @@ namespace TurmaMaisA.Test.Services.Auth
                                 .ReturnsAsync(passwordIsCorrect);
             }
 
-            var expectedErrorMessage = "Incorrect username or password.";
+            var expectedErrorMessage = "Credenciais inválidas.";
 
             // Act
             var result = await _service.LoginAsync(loginDto);
@@ -88,6 +94,28 @@ namespace TurmaMaisA.Test.Services.Auth
             Assert.False(result.IsSuccess);
             Assert.Equal(expectedErrorMessage, result.ErrorMessage);
             Assert.Null(result.Token);
+        }
+
+        [Fact(DisplayName = "Login When Organization Not Found Should Return Failure")]
+        public async Task Login_WhenOrganizationNotFound_ShouldReturnFailure()
+        {
+            // Arrange
+            var loginDto = new LoginDto { Username = "joao@teste.com", Password = "Password123!" };
+            var nonExistentOrganizationId = Guid.NewGuid();
+            var user = new User { FullName = "João Guilherme", Email = loginDto.Username, UserName = loginDto.Username, OrganizationId = nonExistentOrganizationId };
+
+            _mockUserManager.Setup(um => um.FindByEmailAsync(loginDto.Username))
+                            .ReturnsAsync(user);
+            _mockUserManager.Setup(um => um.CheckPasswordAsync(user, loginDto.Password))
+                            .ReturnsAsync(true);
+            _mockOrganizationRepository.Setup(or => or.GetByIdAsync(nonExistentOrganizationId))
+                            .ReturnsAsync((Organization?)null);
+
+            var expectedMessage = $"The entity 'Organization' with key '{nonExistentOrganizationId}' was not found.";
+
+            //Act & Assert
+            var exception = await Assert.ThrowsAsync<NotFoundException>(() => _service.LoginAsync(loginDto));
+            Assert.Equal(expectedMessage, exception.Message);
         }
 
         [Fact(DisplayName = "RegisterUserAsync When User Is New Should Return Success")]
@@ -147,7 +175,7 @@ namespace TurmaMaisA.Test.Services.Auth
             _mockUserManager.Setup(um => um.FindByEmailAsync(registerDto.Email))
                             .ReturnsAsync(existingUser);
 
-            var expectedMessage = "Email already registered.";
+            var expectedMessage = "Email já cadastrado.";
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<BusinessRuleException>(() => _service.RegisterUserAsync(registerDto));
