@@ -3,6 +3,9 @@
     <!-- <v-data-table :items="studentStore.students"></v-data-table> -->
     <v-data-table :headers="headers" :loading="studentStore.isLoadingStudents"
       :hide-default-footer="(studentStore.students.length < 11)" :items="studentStore.students">
+      <template v-slot:loading>
+        <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+      </template>
       <template v-slot:top>
         <header-table table-name="Seus Alunos" @add="openCreateDialog()">
         </header-table>
@@ -55,7 +58,7 @@
     <v-card :title="`Excluir Aluno`">
       <v-divider></v-divider>
       <v-container>
-        <p>Tem certeza que deseja excluir o aluno '{{ studentName }}'?</p>
+        <p>Deseja realmente excluir o aluno '{{ studentName }}'?</p>
       </v-container>
       <v-card-actions class="bg-surface-light">
         <v-btn text="Cancelar" variant="plain" @click="closeDeleteDialog()"></v-btn>
@@ -71,6 +74,7 @@ import { onMounted } from 'vue';
 import { useStudentStore } from '@/stores/students';
 import type { StudentDto } from '@/types/student';
 import type { DataTableHeader } from 'vuetify';
+import { rules } from "@/utils/rules";
 
 onMounted(() => {
   studentStore.fetchStudents();
@@ -83,13 +87,6 @@ const dialog = shallowRef<boolean>(false);
 const isEditing = ref<boolean>(false)
 const formCreateOrEditStudent = ref<HTMLFormElement | null>(null);
 const isFormValid = ref<boolean>(false);
-const rules = {
-  required: (value: string) => !!value || 'Este campo é obrigatório.',
-  maxLength: (limit: number) => {
-    return (v: string) => (v && v.length <= limit) || `Máximo de ${limit} caracteres permitidos.`;
-  },
-  email: (v: string) => /.+@.+\..+/.test(v) || 'E-mail deve ser válido.',
-};
 
 const dialogDelete = shallowRef<boolean>(false);
 const idToDelete = ref<string>('');

@@ -7,7 +7,20 @@ export interface AuthState {
   error: string | null;
 }
 
-export interface LoginResult {
+export interface AuthResultDto {
   success: boolean;
   message?: string | null;
+}
+
+export interface LoginDto {
+  username: string;
+  password: string;
+}
+
+export interface RegisterDto {
+  fullName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  organizationName: string;
 }

@@ -2,6 +2,9 @@
   <v-sheet border rounded>
     <v-data-table :headers="headers" :loading="courseStore.isLoadingCourses"
       :hide-default-footer="(courseStore.courses.length < 11)" :items="courseStore.courses">
+      <template v-slot:loading>
+        <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+      </template>
       <template v-slot:top>
         <header-table table-name="Seus Cursos" @add="openCreateDialog()">
         </header-table>
@@ -42,7 +45,7 @@
     <v-card :title="`Excluir Curso`">
       <v-divider></v-divider>
       <v-container>
-        <p>Tem certeza que deseja excluir o curso '{{ courseName }}'?</p>
+        <p>Deseja realmente excluir o curso '{{ courseName }}'?</p>
       </v-container>
       <v-card-actions class="bg-surface-light">
         <v-btn text="Cancelar" variant="plain" @click="closeDeleteDialog()"></v-btn>
@@ -58,6 +61,7 @@ import { onMounted } from 'vue';
 import { useCourseStore } from '@/stores/courses';
 import type { CourseDto } from '@/types/course';
 import type { DataTableHeader } from 'vuetify';
+import { rules } from "@/utils/rules";
 
 onMounted(() => {
   courseStore.fetchCourses();
@@ -70,12 +74,6 @@ const dialog = shallowRef<boolean>(false);
 const isEditing = ref<boolean>(false)
 const formCreateOrEditCourse = ref<HTMLFormElement | null>(null);
 const isFormValid = ref<boolean>(false);
-const rules = {
-  required: (value: string) => !!value || 'Este campo é obrigatório.',
-  maxLength: (limit: number) => {
-    return (v: string) => (v && v.length <= limit) || `Máximo de ${limit} caracteres permitidos.`;
-  }
-};
 
 const dialogDelete = shallowRef<boolean>(false);
 const idToDelete = ref<string>('');

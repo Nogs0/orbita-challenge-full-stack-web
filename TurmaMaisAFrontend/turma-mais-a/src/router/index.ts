@@ -13,37 +13,41 @@ const router = createRouter({
   routes: [
     // --- ÁREA DESLOGADA ---
     {
-      path: '/login',
-      name: 'login',
-      component: () => import('@/pages/LoginPage.vue'),
-      meta: { requiresAuth: false }, // Qualquer um pode acessar
-    },
-    {
-      path: '/register',
-      name: 'register',
-      component: () => import('@/pages/RegisterPage.vue'),
+      path: '/',
+      component: () => import('@/layouts/AuthLayout.vue'),
       meta: { requiresAuth: false },
+      children: [
+        {
+          path: '/login',
+          name: 'login',
+          component: () => import('@/pages/LoginPage.vue'),
+        },
+        {
+          path: '/register',
+          name: 'register',
+          component: () => import('@/pages/RegisterPage.vue'),
+        },
+      ]
     },
-
     // --- ÁREA LOGADA ---
     {
-      path: '/',
+      path: '/app',
       component: () => import('@/layouts/default.vue'),
       meta: { requiresAuth: true }, // Todas as rotas filhas exigem login!
       children: [
         {
-          path: '',
+          path: '/',
           redirect: '/students'
         },
         {
           path: '/students',
-          name: 'student',  
-          component: () => import('@/pages/StudentPage.vue'), 
+          name: 'student',
+          component: () => import('@/pages/StudentPage.vue'),
         },
         {
           path: '/courses',
-          name: 'course',  
-          component: () => import('@/pages/CoursePage.vue'), 
+          name: 'course',
+          component: () => import('@/pages/CoursePage.vue'),
         },
       ],
     },
@@ -61,12 +65,12 @@ router.beforeEach((to, from, next) => {
   const isLoggedIn = authStore.isAuthenticated;
 
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-  const isLoginPage = to.path == '/login' || to.path == '/register';
+  const isLoginPage = to.path == '/login' || to.path == '/register' || to.path == '/';
 
   if (requiresAuth && !isLoggedIn) {
     next('/login');
   } else if (isLoginPage && isLoggedIn) {
-    next('/');
+    next('/app');
   } else {
     next();
   }
