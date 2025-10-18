@@ -1,9 +1,13 @@
+import type { PagedInputDto } from "./shared";
+
 export interface StudentState {
     students: StudentListDto[],
+    totalCount: number,
     loadingList: boolean,
     loadingItem: boolean,
     error: string | null,
-    student: StudentDto | null
+    student: StudentDto | null,
+    pagedInput: PagedInputDto | null
 }
 
 export interface StudentDto {

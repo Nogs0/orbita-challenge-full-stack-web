@@ -1,14 +1,17 @@
+import type { PagedInputDto, PagedResultDto } from '@/types/shared';
 import type { StudentState, StudentListDto, StudentDto, StudentUpdateDto, StudentCreateDto } from '@/types/student'
 import axios, { isAxiosError } from 'axios';
 import { defineStore } from 'pinia'
 
 function getInitialState(): StudentState {
     const students: StudentListDto[] = [];
+    const totalCount = 0;
     const student = null;
     const loadingList = false;
     const loadingItem = false;
     const error = null;
-    return { students, student, loadingList, loadingItem, error };
+    const pagedInput = null;
+    return { students, totalCount, student, loadingList, loadingItem, error, pagedInput };
 }
 
 export const useStudentStore = defineStore('Students', {
@@ -16,6 +19,7 @@ export const useStudentStore = defineStore('Students', {
     getters: {
         isLoadingStudents: (state): boolean => !!state.loadingList,
         isLoadingStudent: (state): boolean => !!state.loadingItem,
+        totalCountStudents: (state): number => state.totalCount
     },
     actions: {
         async createStudent(dto: StudentCreateDto): Promise<void> {
@@ -32,12 +36,21 @@ export const useStudentStore = defineStore('Students', {
                 this.loadingItem = false;
             }
         },
-        async fetchStudents(): Promise<void> {
+        async fetchStudents(pageNumber?: number, pageSize?: number, search?: string): Promise<void> {
             this.loadingList = true;
             this.error = null;
             try {
-                const response = await axios.get<StudentListDto[]>('/Students');
-                this.students = response.data;
+                if (pageNumber || pageSize || search) {
+                    this.pagedInput = {
+                        pageNumber: pageNumber || 1,
+                        pageSize: pageSize || 10,
+                        search
+                    }
+                }
+
+                const response = await axios.get<PagedResultDto<StudentListDto>>('/Students', { params: this.pagedInput });
+                this.students = response.data.items;
+                this.totalCount = response.data.totalCount;
             } catch (err) {
                 this.error = 'Não foi possível carregar os alunos.';
                 console.error(err);

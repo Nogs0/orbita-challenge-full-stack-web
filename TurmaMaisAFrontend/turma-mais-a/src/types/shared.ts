@@ -1,4 +1,10 @@
 export interface PagedInputDto {
-    skipCount: number;
-    maxCount: number;
+    pageNumber: number;
+    pageSize: number;
+    search?: string;
+}
+
+export interface PagedResultDto<TListDto> {
+    items: TListDto[],
+    totalCount: number
 }
