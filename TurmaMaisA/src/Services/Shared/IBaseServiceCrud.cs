@@ -1,4 +1,6 @@
-﻿namespace TurmaMaisA.Services.Shared
+﻿using TurmaMaisA.Services.Shared.Dtos;
+
+namespace TurmaMaisA.Services.Shared
 {
     public interface IBaseServiceCrud<TEntity, TEntityDto, TListDto, TCreateDto, TUpdateDto>
     {

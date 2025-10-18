@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using TurmaMaisA.Services.Shared.Dtos;
 using TurmaMaisA.Services.Students;
 using TurmaMaisA.Services.Students.Dtos;
 
@@ -87,11 +88,11 @@ namespace TurmaMaisA.Controllers
         /// Retorna uma lista com todos os estudantes cadastrados.
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] PagedInputDto dto)
         {
             _logger.LogInformation("Fetching all students.");
-            var students = await _service.GetAllAsync();
-            return Ok(students);
+            var pagedStudents = await _service.GetPagedItemsAsync(dto);
+            return Ok(pagedStudents);
         }
 
         /// <summary>

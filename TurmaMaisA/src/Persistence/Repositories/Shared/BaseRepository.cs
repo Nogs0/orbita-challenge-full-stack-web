@@ -58,5 +58,20 @@ namespace TurmaMaisA.Persistence.Repositories.Shared
         {
             _dbSet.Remove(entity);
         }
+
+        public async Task<PagedResult<TEntity>> GetPagedItemsAsync(int pageNumber, int pageSize, Expression<Func<TEntity, bool>>? predicate = null)
+        {
+            var query = _dbSet.AsQueryable();
+
+            if (predicate != null)
+                query = query.Where(predicate);
+
+            var skipAmount = (pageNumber - 1) * pageSize;
+
+            var totalCount = await query.CountAsync();
+            query = query.Skip(skipAmount).Take(pageSize);
+
+            return new PagedResult<TEntity>(await query.ToListAsync(), totalCount);
+        }
     }
 }

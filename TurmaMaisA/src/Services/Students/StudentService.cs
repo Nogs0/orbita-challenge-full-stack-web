@@ -1,7 +1,8 @@
-﻿using TurmaMaisA.Models;
+﻿using System.Linq.Expressions;
+using TurmaMaisA.Models;
 using TurmaMaisA.Persistence.Interfaces;
-using TurmaMaisA.Persistence.Repositories.Courses;
 using TurmaMaisA.Persistence.Repositories.Students;
+using TurmaMaisA.Services.Shared.Dtos;
 using TurmaMaisA.Services.Students.Dtos;
 using TurmaMaisA.Utils.Exceptions;
 using TurmaMaisA.Utils.Validators;
@@ -13,7 +14,7 @@ namespace TurmaMaisA.Services.Students
         private readonly IStudentRepository _repository;
         private readonly IUnitOfWork _uow;
 
-        public StudentService(IStudentRepository repository, 
+        public StudentService(IStudentRepository repository,
             IUnitOfWork uow
             )
         {
@@ -48,6 +49,22 @@ namespace TurmaMaisA.Services.Students
             return students.Select(s => new StudentListDto(s));
         }
 
+        public async Task<PagedResultDto<StudentListDto>> GetPagedItemsAsync(PagedInputDto dto)
+        {
+            Expression<Func<Student, bool>>? searchExp = null;
+
+            if (!string.IsNullOrEmpty(dto.Search))
+            {
+                searchExp = (s) =>
+                s.Name.Trim().Contains(dto.Search, StringComparison.CurrentCultureIgnoreCase) ||
+                s.RA.Trim().Contains(dto.Search, StringComparison.CurrentCultureIgnoreCase) ||
+                s.Cpf.Trim().Contains(dto.Search, StringComparison.CurrentCultureIgnoreCase);
+            }
+
+            var result = await _repository.GetPagedItemsAsync(dto.PageNumber, dto.PageSize, searchExp);
+            return new PagedResultDto<StudentListDto>(result.Items.Select(x => new StudentListDto(x)).ToList(), result.TotalCount);
+        }
+
         public async Task<StudentDto> GetByIdAsync(Guid id)
         {
             var entity = await _repository.GetByIdAsync(id) ??
@@ -61,11 +78,11 @@ namespace TurmaMaisA.Services.Students
             var entity = await _repository.GetByIdAsync(dto.Id) ??
                 throw new NotFoundException("Student", dto.Id);
 
-            entity.Name  = dto.Name;
+            entity.Name = dto.Name;
             entity.Email = dto.Email;
 
             _repository.Update(entity);
-            await _uow.SaveChangesAsync();  
+            await _uow.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Guid id)

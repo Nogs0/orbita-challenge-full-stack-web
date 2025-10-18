@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace TurmaMaisA.Persistence.Repositories.Shared
 {
@@ -8,6 +7,7 @@ namespace TurmaMaisA.Persistence.Repositories.Shared
         Task CreateAsync(TEntity entity);
         Task<TEntity?> GetByIdAsync(Guid id);
         Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>>? predicate = null);
+        Task<PagedResult<TEntity>> GetPagedItemsAsync(int pageNumber, int pageSize, Expression<Func<TEntity, bool>>? predicate = null);
         Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null);
         Task<int> CountWithIgnoreQueryFiltersAsync(Expression<Func<TEntity, bool>>? predicate = null);
         void Update(TEntity entity);
