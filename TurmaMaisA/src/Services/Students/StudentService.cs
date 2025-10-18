@@ -42,10 +42,10 @@ namespace TurmaMaisA.Services.Students
             return new StudentDto(student);
         }
 
-        public async Task<IEnumerable<StudentDto>> GetAllAsync()
+        public async Task<IEnumerable<StudentListDto>> GetAllAsync()
         {
             var students = await _repository.GetAllAsync();
-            return students.Select(s => new StudentDto(s));
+            return students.Select(s => new StudentListDto(s));
         }
 
         public async Task<StudentDto> GetByIdAsync(Guid id)
@@ -65,7 +65,7 @@ namespace TurmaMaisA.Services.Students
             entity.Email = dto.Email;
 
             _repository.Update(entity);
-            await _uow.SaveChangesAsync();
+            await _uow.SaveChangesAsync();  
         }
 
         public async Task DeleteAsync(Guid id)

@@ -9,11 +9,11 @@ namespace TurmaMaisA.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class StudentController : ControllerBase
+    public class StudentsController : ControllerBase
     {
         private readonly IStudentService _service;
-        private readonly ILogger<StudentController> _logger;
-        public StudentController(IStudentService service, ILogger<StudentController> logger)
+        private readonly ILogger<StudentsController> _logger;
+        public StudentsController(IStudentService service, ILogger<StudentsController> logger)
         {
             _service = service;
             _logger = logger;
@@ -98,7 +98,7 @@ namespace TurmaMaisA.Controllers
         /// Exclui um estudante do sistema.
         /// </summary>
         /// <param name="id">O ID do estudante a ser excluído.</param>
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             _logger.LogInformation($"Deleting student with ID: {id}", id);
