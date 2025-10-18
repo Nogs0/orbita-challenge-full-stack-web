@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace TurmaMaisA.Models
 {
     public class User : IdentityUser
     {
+
+        [MaxLength(128)]
         public required string FullName { get; set; }
         public Guid OrganizationId { get; set; }
         public Organization? Organization { get; set; }
