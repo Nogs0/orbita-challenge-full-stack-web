@@ -5,7 +5,7 @@
  */
 
 // Composables
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
 const router = createRouter({
@@ -25,7 +25,7 @@ const router = createRouter({
       meta: { requiresAuth: false },
     },
 
-    // --- ÁREA LOGADA (Layout principal) ---
+    // --- ÁREA LOGADA ---
     {
       path: '/',
       component: () => import('@/layouts/default.vue'),
@@ -39,6 +39,11 @@ const router = createRouter({
           path: '/students',
           name: 'student',  
           component: () => import('@/pages/StudentPage.vue'), 
+        },
+        {
+          path: '/courses',
+          name: 'course',  
+          component: () => import('@/pages/CoursePage.vue'), 
         },
       ],
     },

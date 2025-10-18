@@ -2,12 +2,13 @@
   <v-app>
     <v-navigation-drawer>
       <v-list>
-        <v-list-item to="/students" prepend-icon="mdi-package-variant" title="Alunos"></v-list-item>
+        <v-list-item to="/students" prepend-icon="mdi-account-school" title="Alunos"></v-list-item>
+        <v-list-item to="/courses" prepend-icon="mdi-book-variant" title="Cursos"></v-list-item>
       </v-list>
     </v-navigation-drawer>
 
     <v-app-bar>
-      <v-toolbar-title>{{authStore.organizationName}}</v-toolbar-title>
+      <v-toolbar-title>Gestão {{authStore.organizationName}}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn icon @click="authStore.logout()">
         <v-icon>mdi-logout</v-icon>

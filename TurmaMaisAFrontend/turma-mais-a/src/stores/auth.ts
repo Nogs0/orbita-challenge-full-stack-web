@@ -8,18 +8,21 @@ function getInitialState(): AuthState {
   const tokenExpiration = localStorage.getItem('tokenExpiration') ?? "";
   const organizationName = localStorage.getItem('organizationName') ?? "";
   const userFullname = localStorage.getItem('userFullname') ?? "";
-  return { token, tokenExpiration, organizationName, userFullname };
+  const isLoading = false;
+  const error = null;
+  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  return { token, tokenExpiration, organizationName, userFullname, isLoading, error };
 }
 
 export const useAuthStore = defineStore('auth', {
   state: (): AuthState => getInitialState(),
-
   getters: {
     isAuthenticated: (state): boolean => !!state.token
   },
-
   actions: {
     async login(credentials: { username: string; password: string }): Promise<LoginResult> {
+      this.isLoading = true;
+      this.error = null;
       try {
         const response = await axios.post<AuthState>('/Auth/login', credentials);
 
@@ -52,12 +55,15 @@ export const useAuthStore = defineStore('auth', {
         let message = 'Ocorreu um erro inesperado. Tente novamente.';
 
         if (isAxiosError(error) && error.response?.data?.errorMessage) {
-            message = error.response.data.errorMessage;
+          message = error.response.data.errorMessage;
         }
         return {
           success: false,
           message: message
         }
+      }
+      finally {
+        this.isLoading = false;
       }
     },
 
