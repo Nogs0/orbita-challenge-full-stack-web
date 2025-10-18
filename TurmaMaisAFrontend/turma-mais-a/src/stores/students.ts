@@ -1,7 +1,9 @@
-import type { PagedInputDto, PagedResultDto } from '@/types/shared';
-import type { StudentState, StudentListDto, StudentDto, StudentUpdateDto, StudentCreateDto } from '@/types/student'
-import axios, { isAxiosError } from 'axios';
-import { defineStore } from 'pinia'
+import { useSnackbar } from '@/composables/useSnackbar';
+import type { PagedResultDto } from '@/types/shared';
+import type { StudentCreateDto, StudentDto, StudentListDto, StudentState, StudentUpdateDto } from '@/types/student';
+import axios from 'axios';
+import { defineStore } from 'pinia';
+const { showSnackbar } = useSnackbar();
 
 function getInitialState(): StudentState {
     const students: StudentListDto[] = [];
@@ -29,8 +31,10 @@ export const useStudentStore = defineStore('Students', {
                 const response = await axios.post<StudentDto>('/Students', dto);
                 this.student = response.data;
                 await this.fetchStudents();
+                showSnackbar('Aluno criado com sucesso.', 'success');
             } catch (err) {
-                this.error = 'Não foi possível carregar os alunos.';
+                showSnackbar('Não foi possível criar o aluno.', 'error');
+                this.error = 'Não foi possível criar o aluno.';
                 console.error(err);
             } finally {
                 this.loadingItem = false;
@@ -52,6 +56,7 @@ export const useStudentStore = defineStore('Students', {
                 this.students = response.data.items;
                 this.totalCount = response.data.totalCount;
             } catch (err) {
+                showSnackbar('Não foi possível carregar os aluno.', 'error');
                 this.error = 'Não foi possível carregar os alunos.';
                 console.error(err);
             } finally {
@@ -65,6 +70,7 @@ export const useStudentStore = defineStore('Students', {
                 const response = await axios.get<StudentDto>('/Students/' + id);
                 this.student = response.data;
             } catch (err) {
+                showSnackbar('Não foi possível carregar o aluno.', 'error');
                 this.error = 'Não foi possível carregar o aluno.';
                 console.error(err);
             } finally {
@@ -77,7 +83,9 @@ export const useStudentStore = defineStore('Students', {
             try {
                 await axios.put<StudentDto>('/Students/' + dto.id, dto);
                 await this.fetchStudents();
+                showSnackbar('Aluno atualizado com sucesso.', 'success');
             } catch (err) {
+                showSnackbar('Não foi possível atualizar o aluno.', 'error');
                 this.error = 'Não foi possível atualizar o aluno.';
                 console.error(err);
             } finally {
@@ -90,7 +98,9 @@ export const useStudentStore = defineStore('Students', {
             try {
                 await axios.delete<StudentDto>('/Students/' + id);
                 await this.fetchStudents();
+                showSnackbar('Aluno excluído com sucesso.', 'success');
             } catch (err) {
+                showSnackbar('Não foi possível excluir o aluno.', 'error');
                 this.error = 'Não foi possível excluir o aluno.';
                 console.error(err);
             } finally {

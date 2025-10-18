@@ -76,6 +76,7 @@ import { useStudentStore } from '@/stores/students';
 import type { StudentDto } from '@/types/student';
 import type { DataTableHeader } from 'vuetify';
 import { rules } from "@/utils/rules";
+import { formatarCPF } from '@/utils/formatters';
 
 const studentStore = useStudentStore();
 
@@ -94,6 +95,13 @@ const headers = ref<Readonly<DataTableHeader[]>>([
   { title: 'CPF', key: 'cpf', sortable: false },
   { title: 'Ações', key: 'actions', sortable: false, align: "end" }
 ]);
+
+watch(() => formModel.value.cpf, (novoValor: string) => {
+  const cpfFormatado = formatarCPF(novoValor);
+  if (cpfFormatado !== novoValor) {
+    formModel.value.cpf = cpfFormatado;
+  }
+});
 
 function createNewRecord(): StudentDto {
   return {
