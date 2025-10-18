@@ -1,21 +1,34 @@
 <template>
   <v-sheet border rounded>
     <v-data-table-server
-      :headers="headers" 
+      class="elevation-4"
+      :headers="headers"
       :loading="courseStore.isLoadingCourses"
-      :hide-default-footer="(courseStore.totalCountCourses < 11)" 
+      :hide-default-footer="courseStore.totalCountCourses < 11"
       :items="courseStore.courses"
-      :items-length="courseStore.totalCountCourses" 
-      @update:options="loadCourses" 
-      disable-sort>
+      :items-length="courseStore.totalCountCourses"
+      @update:options="loadCourses"
+      disable-sort
+    >
       <template v-slot:top>
-        <header-table table-name="Seus Cursos" @add="openCreateDialog()">
-        </header-table>
+        <header-table table-name="Seus Cursos" icon="mdi-book-variant" @add="openCreateDialog()"> </header-table>
       </template>
       <template v-slot:item.actions="{ item }">
         <div class="d-flex ga-2 justify-end">
-          <v-icon color="medium-emphasis" icon="mdi-pencil" size="small" title="Editar" @click="openEditDialog(item.id)"></v-icon>
-          <v-icon color="medium-emphasis" icon="mdi-delete" size="small" title="Excluir" @click="openDeleteDialog(item.id, item.name)"></v-icon>
+          <v-icon
+            color="medium-emphasis"
+            icon="mdi-pencil"
+            size="small"
+            title="Editar"
+            @click="openEditDialog(item.id)"
+          ></v-icon>
+          <v-icon
+            color="medium-emphasis"
+            icon="mdi-delete"
+            size="small"
+            title="Excluir"
+            @click="openDeleteDialog(item.id, item.name)"
+          ></v-icon>
         </div>
       </template>
       <template v-slot:no-data>
@@ -29,16 +42,28 @@
       <v-divider></v-divider>
       <v-form ref="formCreateOrEditCourse" v-model="isFormValid">
         <v-container>
-
-          <v-text-field v-model="formModel.name" label="Nome *"
-            :rules="[rules.required, rules.maxLength(128)]"></v-text-field>
+          <v-text-field
+            v-model="formModel.name"
+            label="Nome *"
+            :rules="[rules.required, rules.maxLength(128)]"
+          ></v-text-field>
         </v-container>
         <v-card-actions class="bg-surface-light">
-          <v-btn text="Cancelar" variant="plain" @click="closeCreateOrEditDialog()"></v-btn>
+          <v-btn
+            text="Cancelar"
+            variant="plain"
+            @click="closeCreateOrEditDialog()"
+          ></v-btn>
 
           <v-spacer></v-spacer>
 
-          <v-btn text="Salvar" @click="save" color="green" :disabled="!isFormValid" variant="tonal"></v-btn>
+          <v-btn
+            text="Salvar"
+            @click="save"
+            color="green"
+            :disabled="!isFormValid"
+            variant="tonal"
+          ></v-btn>
         </v-card-actions>
       </v-form>
     </v-card>
@@ -51,44 +76,49 @@
         <p>Deseja realmente excluir o curso '{{ courseName }}'?</p>
       </v-container>
       <v-card-actions class="bg-surface-light">
-        <v-btn text="Cancelar" variant="plain" @click="closeDeleteDialog()"></v-btn>
+        <v-btn text="Cancelar" variant="tonal" @click="closeDeleteDialog()"></v-btn>
         <v-spacer></v-spacer>
-        <v-btn text="Excluir" color="red" @click="deleteItem(idToDelete)" variant="tonal"></v-btn>
+        <v-btn
+          text="Excluir"
+          color="accent"
+          @click="deleteItem(idToDelete)"
+          variant="tonal"
+        ></v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script setup lang="ts">
-import { useCourseStore } from '@/stores/courses';
-import type { CourseDto } from '@/types/course';
-import type { DataTableHeader } from 'vuetify';
+import { useCourseStore } from "@/stores/courses";
+import type { CourseDto } from "@/types/course";
+import type { DataTableHeader } from "vuetify";
 import { rules } from "@/utils/rules";
 
 const courseStore = useCourseStore();
 
-const formModel = ref<CourseDto>(createNewRecord())
+const formModel = ref<CourseDto>(createNewRecord());
 const dialog = shallowRef<boolean>(false);
-const isEditing = ref<boolean>(false)
+const isEditing = ref<boolean>(false);
 const formCreateOrEditCourse = ref<HTMLFormElement | null>(null);
 const isFormValid = ref<boolean>(false);
 
 const dialogDelete = shallowRef<boolean>(false);
-const idToDelete = ref<string>('');
-const courseName = ref<string>('');
+const idToDelete = ref<string>("");
+const courseName = ref<string>("");
 const headers = ref<Readonly<DataTableHeader[]>>([
-  { title: 'Nome', key: 'name', sortable: false },
-  { title: 'Ações', key: 'actions', sortable: false, align: "end" }
+  { title: "Nome", key: "name", sortable: false },
+  { title: "Ações", key: "actions", sortable: false, align: "end" },
 ]);
 
 function createNewRecord(): CourseDto {
   return {
-    id: '',
-    name: ''
-  }
+    id: "",
+    name: "",
+  };
 }
 
-function loadCourses(options: { page: number, itemsPerPage: number }) {
+function loadCourses(options: { page: number; itemsPerPage: number }) {
   courseStore.fetchCourses(options.page, options.itemsPerPage);
 }
 
@@ -103,31 +133,30 @@ async function openEditDialog(id: string) {
   if (courseStore.course) {
     formModel.value = {
       id: courseStore.course.id,
-      name: courseStore.course.name
-    }
+      name: courseStore.course.name,
+    };
   }
-  dialog.value = true
+  dialog.value = true;
 }
 
 async function save() {
   const { valid } = await formCreateOrEditCourse.value?.validate();
 
-  if (!valid)
-    return;
+  if (!valid) return;
 
   if (isEditing.value) {
     await courseStore.updateCourse({
       id: formModel.value.id,
-      name: formModel.value.name
+      name: formModel.value.name,
     });
     isEditing.value = false;
   } else {
     await courseStore.createCourse({
-      name: formModel.value.name
+      name: formModel.value.name,
     });
   }
 
-  dialog.value = false
+  dialog.value = false;
 }
 
 function closeCreateOrEditDialog() {
@@ -150,7 +179,9 @@ async function deleteItem(id: string) {
 
 function closeDeleteDialog() {
   dialogDelete.value = false;
-  idToDelete.value = '';
-  courseName.value = '';
+  idToDelete.value = "";
+  setTimeout(() => {
+    courseName.value = "";
+  }, 150);
 }
 </script>

@@ -25,7 +25,7 @@
               <v-text-field v-model="formModel.confirmPassword" label="Confirme a senha *" type="password"
                 prepend-inner-icon="mdi-lock-outline"
                 :rules="[rules.required, rules.minLength(8), rules.maxLength(64), rules.passwordMatch(formModel.password)]"></v-text-field>
-              <v-btn type="submit" color="primary" block class="mt-2" :loading="authStore.isLoading"
+              <v-btn type="submit" color="green" block class="mt-2" :loading="authStore.isLoading"
                 :disabled="!isFormValid">
                 Cadastrar
               </v-btn>

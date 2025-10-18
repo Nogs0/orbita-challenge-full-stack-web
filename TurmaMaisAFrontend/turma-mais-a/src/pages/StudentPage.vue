@@ -1,19 +1,16 @@
 <template>
   <v-sheet border rounded>
-    <v-data-table-server 
-      :headers="headers" 
-      :loading="studentStore.isLoadingStudents"
-      :hide-default-footer="(studentStore.totalCountStudents < 11)" 
-      :items="studentStore.students"
-      :items-length="studentStore.totalCountStudents" 
-      @update:options="loadStudents" 
-      disable-sort>
+    <v-data-table-server class="elevation-3" :headers="headers" :loading="studentStore.isLoadingStudents"
+      :hide-default-footer="(studentStore.totalCountStudents < 11)" :items="studentStore.students"
+      :items-length="studentStore.totalCountStudents" @update:options="loadStudents" disable-sort>
       <template v-slot:top>
-        <header-table table-name="Seus Alunos" @add="openCreateDialog()">
+        <header-table table-name="Seus Alunos" icon="mdi-account-school" @add="openCreateDialog()">
         </header-table>
       </template>
       <template v-slot:item.actions="{ item }">
         <div class="d-flex ga-2 justify-end">
+          <v-icon color="medium-emphasis" icon="mdi-book-cog" size="small" title="Editar"
+            @click="openSetCoursesDialog(item.id, item.name)"></v-icon>
           <v-icon color="medium-emphasis" icon="mdi-pencil" size="small" title="Editar"
             @click="openEditDialog(item.id)"></v-icon>
           <v-icon color="medium-emphasis" icon="mdi-delete" size="small" title="Excluir"
@@ -26,7 +23,7 @@
     </v-data-table-server>
   </v-sheet>
 
-  <v-dialog v-model="dialog" max-width="500" persistent>
+  <v-dialog v-model="createOrEditDialog" max-width="500" persistent>
     <v-card :title="`${isEditing ? 'Editar' : 'Adicionar'} Aluno`">
       <v-divider></v-divider>
       <v-form ref="formCreateOrEditStudent" v-model="isFormValid">
@@ -46,26 +43,27 @@
 
         </v-container>
         <v-card-actions class="bg-surface-light">
-          <v-btn text="Cancelar" variant="plain" @click="closeCreateOrEditDialog()"></v-btn>
-
+          <v-btn text="Cancelar" variant="tonal" @click="closeCreateOrEditDialog()"></v-btn>
           <v-spacer></v-spacer>
-
           <v-btn text="Salvar" @click="save" color="green" :disabled="!isFormValid"></v-btn>
         </v-card-actions>
       </v-form>
     </v-card>
   </v-dialog>
 
-  <v-dialog v-model="dialogDelete" max-width="500" persistent>
-    <v-card :title="`Excluir Aluno`">
+  <enrollment-modal :show="setCoursesDialog" :student-id="selectedStudentId" :student-name="selectedStudentName"
+    @close="closeSetCoursesDialog()" @saved="closeSetCoursesDialog()"></enrollment-modal>
+
+  <v-dialog v-model="deleteDialog" max-width="500" persistent>
+    <v-card title="Excluir Aluno">
       <v-divider></v-divider>
       <v-container>
         <p>Deseja realmente excluir o aluno '{{ studentName }}'?</p>
       </v-container>
       <v-card-actions class="bg-surface-light">
-        <v-btn text="Cancelar" variant="plain" @click="closeDeleteDialog()"></v-btn>
+        <v-btn text="Cancelar" @click="closeDeleteDialog()" variant="tonal"></v-btn>
         <v-spacer></v-spacer>
-        <v-btn text="Excluir" color="red" @click="deleteItem(idToDelete)" variant="tonal"></v-btn>
+        <v-btn text="Excluir" color="accent" @click="deleteItem(idToDelete)" variant="tonal"></v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -77,18 +75,28 @@ import type { StudentDto } from '@/types/student';
 import type { DataTableHeader } from 'vuetify';
 import { rules } from "@/utils/rules";
 import { formatarCPF } from '@/utils/formatters';
+import { useSnackbar } from '@/composables/useSnackbar';
+import { ca } from 'vuetify/locale';
+import { isAxiosError } from 'axios';
 
+const { showSnackbar } = useSnackbar();
+const loadingItem = ref<boolean>(false);
 const studentStore = useStudentStore();
 
 const formModel = ref<StudentDto>(createNewRecord())
-const dialog = shallowRef<boolean>(false);
-const isEditing = ref<boolean>(false)
+const createOrEditDialog = shallowRef<boolean>(false);
+const isEditing = ref<boolean>(false);
 const formCreateOrEditStudent = ref<HTMLFormElement | null>(null);
 const isFormValid = ref<boolean>(false);
 
-const dialogDelete = shallowRef<boolean>(false);
-const idToDelete = ref<string>('');
+const deleteDialog = shallowRef<boolean>(false);
+const idToDelete = ref<string>('createOrEditDialog');
 const studentName = ref<string>('');
+
+const setCoursesDialog = shallowRef<boolean>(false);
+const selectedStudentId = ref<string>('');
+const selectedStudentName = ref<string>('');
+
 const headers = ref<Readonly<DataTableHeader[]>>([
   { title: 'Nome', key: 'name', sortable: false },
   { title: 'RA', key: 'ra', sortable: false },
@@ -119,7 +127,7 @@ function loadStudents(options: { page: number, itemsPerPage: number }) {
 
 function openCreateDialog() {
   formModel.value = createNewRecord();
-  dialog.value = true;
+  createOrEditDialog.value = true;
 }
 
 async function openEditDialog(id: string) {
@@ -134,7 +142,7 @@ async function openEditDialog(id: string) {
       cpf: studentStore.student.cpf
     }
   }
-  dialog.value = true
+  createOrEditDialog.value = true
 }
 
 async function save() {
@@ -143,48 +151,102 @@ async function save() {
   if (!valid)
     return;
 
+  loadingItem.value = true;
   if (isEditing.value) {
-    await studentStore.updateStudent({
-      id: formModel.value.id,
-      name: formModel.value.name,
-      email: formModel.value.email
-    });
-    setTimeout(() => {
-      isEditing.value = false;
-    }, 200);
+    try {
+      await studentStore.updateStudent({
+        id: formModel.value.id,
+        name: formModel.value.name,
+        email: formModel.value.email
+      });
+      setTimeout(() => {
+        isEditing.value = false;
+      }, 200);
+      showSnackbar('Aluno atualizado com sucesso.', 'success');
+      createOrEditDialog.value = false;
+    } catch (error) {
+      if (isAxiosError(error) && error.response?.data?.errorMessage) {
+        showSnackbar(error.response.data.errorMessage, 'error');
+      }
+      console.error(error);
+    } finally {
+      loadingItem.value = false;
+    }
   } else {
-    await studentStore.createStudent({
-      name: formModel.value.name,
-      email: formModel.value.email,
-      cpf: formModel.value.cpf
-    });
+    try {
+      await studentStore.createStudent({
+        name: formModel.value.name,
+        email: formModel.value.email,
+        cpf: formModel.value.cpf
+      });
+      setTimeout(() => {
+        isEditing.value = false;
+      }, 200);
+      showSnackbar('Aluno cadastrado com sucesso.', 'success');
+      createOrEditDialog.value = false;
+    }
+    catch (error) {
+      if (isAxiosError(error) && error.response?.data.message) {
+        showSnackbar(error.response.data.message, 'error');
+      }
+      console.error(error);
+    }
+    finally {
+      loadingItem.value = false;
+    }
   }
-
-  dialog.value = false
 }
 
 function closeCreateOrEditDialog() {
-  dialog.value = false;
+  createOrEditDialog.value = false;
   setTimeout(() => {
     isEditing.value = false;
   }, 150);
 }
 
+function openSetCoursesDialog(studentId: string, name: string) {
+  selectedStudentId.value = studentId;
+  selectedStudentName.value = name;
+  setCoursesDialog.value = true;
+}
+
+function closeSetCoursesDialog() {
+  setCoursesDialog.value = false;
+  setTimeout(() => {
+    selectedStudentId.value = '';
+    selectedStudentName.value = '';
+  }, 200)
+}
+
 function openDeleteDialog(id: string, name: string) {
-  dialogDelete.value = true;
+  deleteDialog.value = true;
   idToDelete.value = id;
   studentName.value = name;
 }
 
 async function deleteItem(id: string) {
-  await studentStore.deleteStudent(id);
-  closeDeleteDialog();
+  loadingItem.value = true;
+  try {
+    await studentStore.deleteStudent(id);
+    closeDeleteDialog();
+  }
+  catch (error) {
+    if (isAxiosError(error) && error.response?.data.message) {
+      showSnackbar(error.response.data.message, 'error');
+    }
+    console.error(error);
+  }
+  finally {
+    loadingItem.value = false;
+  }
 }
 
 function closeDeleteDialog() {
-  dialogDelete.value = false;
+  deleteDialog.value = false;
   idToDelete.value = '';
-  studentName.value = '';
+  setTimeout(() => {
+    studentName.value = '';
+  }, 150);
 }
 
 </script>
