@@ -7,7 +7,7 @@ namespace TurmaMaisA.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/Students/{studentId}/[controller]")]
+    [Route("api/Students/{studentId}/Enrollments")]
     public class StudentEnrollmentsController : ControllerBase
     {
         private readonly IEnrollmentService _service;
@@ -51,8 +51,8 @@ namespace TurmaMaisA.Controllers
             }
 
             _logger.LogInformation($"Fetching student's enrollments with ID: {studentId}", studentId);
-            var enrollments = await _service.GetByStudentIdAsync(studentId);
-            return Ok(enrollments);
+            var courses = await _service.GetByStudentIdAsync(studentId);
+            return Ok(courses);
         }
     }
 }

@@ -3,6 +3,7 @@ using TurmaMaisA.Persistence.Interfaces;
 using TurmaMaisA.Persistence.Repositories.Courses;
 using TurmaMaisA.Persistence.Repositories.Enrollments;
 using TurmaMaisA.Persistence.Repositories.Students;
+using TurmaMaisA.Services.Courses.Dtos;
 using TurmaMaisA.Services.Enrollments.Dtos;
 using TurmaMaisA.Utils.Exceptions;
 
@@ -61,10 +62,14 @@ namespace TurmaMaisA.Services.Enrollments
             return student.Enrollments;
         }
 
-        public async Task<List<EnrollmentDto>> GetByStudentIdAsync(Guid studentId)
+        public async Task<List<CourseDto>> GetByStudentIdAsync(Guid studentId)
         {
             var enrollments = await _repository.GetAllByStudentId(studentId);
-            return enrollments.Select(e => new EnrollmentDto(e)).ToList();
+            return enrollments.Select(e => new CourseDto()
+            {
+                Id = e.CourseId,
+                Name = e.Course != null ? e.Course.Name : "",
+            }).ToList();
         }
     }
 }

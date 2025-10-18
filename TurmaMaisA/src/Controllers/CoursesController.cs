@@ -79,13 +79,24 @@ namespace TurmaMaisA.Controllers
         }
 
         /// <summary>
-        /// Retorna uma lista com todos os cursos cadastrados.
+        /// Retorna uma lista paginada com todos os cursos cadastrados.
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] PagedInputDto dto)
+        public async Task<IActionResult> GetPaged([FromQuery] PagedInputDto dto)
         {
             _logger.LogInformation("Fetching courses.");
             var courses = await _service.GetPagedItemsAsync(dto);
+            return Ok(courses);
+        }
+
+        /// <summary>
+        /// Retorna uma lista paginada com todos os cursos cadastrados.
+        /// </summary>
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAll()
+        {
+            _logger.LogInformation("Fetching courses.");
+            var courses = await _service.GetAllAsync();
             return Ok(courses);
         }
 
