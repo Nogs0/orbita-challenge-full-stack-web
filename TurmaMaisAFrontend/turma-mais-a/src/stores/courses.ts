@@ -1,21 +1,25 @@
 import type { CourseCreateDto, CourseDto, CourseState } from '@/types/course';
+import type { PagedResultDto } from '@/types/shared';
 import axios from 'axios';
 import { defineStore } from 'pinia'
 
 function getInitialState(): CourseState {
     const courses: CourseDto[] = [];
+    const totalCount = 0;
     const course = null;
     const loadingList = false;
     const loadingItem = false;
     const error = null;
-    return { courses, course, loadingList, loadingItem, error };
+    const pagedInput = null;
+    return { courses, totalCount, course, loadingList, loadingItem, error, pagedInput };
 }
 
 export const useCourseStore = defineStore('Courses', {
     state: (): CourseState => getInitialState(),
     getters: {
         isLoadingCourses: (state): boolean => !!state.loadingList,
-        isLoadingCourse: (state): boolean => !!state.loadingItem
+        isLoadingCourse: (state): boolean => !!state.loadingItem,
+        totalCountCourses: (state): number => state.totalCount
     },
     actions: {
         async createCourse(dto: CourseCreateDto): Promise<void> {
@@ -32,12 +36,21 @@ export const useCourseStore = defineStore('Courses', {
                 this.loadingItem = false;
             }
         },
-        async fetchCourses(): Promise<void> {
+        async fetchCourses(pageNumber?: number, pageSize?: number, search?: string): Promise<void> {
             this.loadingList = true;
             this.error = null;
             try {
-                const response = await axios.get<CourseDto[]>('/Courses');
-                this.courses = response.data;
+                if (pageNumber || pageSize || search) {
+                    this.pagedInput = {
+                        pageNumber: pageNumber || 1,
+                        pageSize: pageSize || 10,
+                        search
+                    }
+                }
+
+                const response = await axios.get<PagedResultDto<CourseDto>>('/Courses', { params: this.pagedInput });
+                this.courses = response.data.items;
+                this.totalCount = response.data.totalCount;
             } catch (err) {
                 this.error = 'Não foi possível carregar os cursos.';
                 console.error(err);

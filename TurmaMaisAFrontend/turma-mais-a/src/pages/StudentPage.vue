@@ -1,6 +1,5 @@
 <template>
   <v-sheet border rounded>
-    <!-- <v-data-table :items="studentStore.students"></v-data-table> -->
     <v-data-table-server 
       :headers="headers" 
       :loading="studentStore.isLoadingStudents"
@@ -73,7 +72,6 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
 import { useStudentStore } from '@/stores/students';
 import type { StudentDto } from '@/types/student';
 import type { DataTableHeader } from 'vuetify';
@@ -90,7 +88,6 @@ const isFormValid = ref<boolean>(false);
 const dialogDelete = shallowRef<boolean>(false);
 const idToDelete = ref<string>('');
 const studentName = ref<string>('');
-const itemsPerPage = ref(10);
 const headers = ref<Readonly<DataTableHeader[]>>([
   { title: 'Nome', key: 'name', sortable: false },
   { title: 'RA', key: 'ra', sortable: false },

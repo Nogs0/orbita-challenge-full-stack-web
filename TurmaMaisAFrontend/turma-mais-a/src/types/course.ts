@@ -1,9 +1,13 @@
+import type { PagedInputDto } from "./shared";
+
 export interface CourseState {
     courses: CourseDto[],
+    totalCount: number;
     loadingList: boolean,
     loadingItem: boolean,
     error: string | null,
-    course: CourseDto | null
+    course: CourseDto | null,
+    pagedInput: PagedInputDto | null
 }
 
 export interface CourseCreateDto {

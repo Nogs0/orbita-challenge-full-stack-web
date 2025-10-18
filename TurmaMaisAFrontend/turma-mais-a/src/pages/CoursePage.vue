@@ -1,10 +1,13 @@
 <template>
   <v-sheet border rounded>
-    <v-data-table :headers="headers" :loading="courseStore.isLoadingCourses"
-      :hide-default-footer="(courseStore.courses.length < 11)" :items="courseStore.courses">
-      <template v-slot:loading>
-        <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
-      </template>
+    <v-data-table-server
+      :headers="headers" 
+      :loading="courseStore.isLoadingCourses"
+      :hide-default-footer="(courseStore.totalCountCourses < 11)" 
+      :items="courseStore.courses"
+      :items-length="courseStore.totalCountCourses" 
+      @update:options="loadCourses" 
+      disable-sort>
       <template v-slot:top>
         <header-table table-name="Seus Cursos" @add="openCreateDialog()">
         </header-table>
@@ -18,7 +21,7 @@
       <template v-slot:no-data>
         <no-items-table @add="openCreateDialog()" table-name="cursos"></no-items-table>
       </template>
-    </v-data-table>
+    </v-data-table-server>
   </v-sheet>
 
   <v-dialog v-model="dialog" max-width="500" persistent>
@@ -27,7 +30,7 @@
       <v-form ref="formCreateOrEditCourse" v-model="isFormValid">
         <v-container>
 
-          <v-text-field v-model="formModel.name" label="Nome"
+          <v-text-field v-model="formModel.name" label="Nome *"
             :rules="[rules.required, rules.maxLength(128)]"></v-text-field>
         </v-container>
         <v-card-actions class="bg-surface-light">
@@ -57,15 +60,10 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
 import { useCourseStore } from '@/stores/courses';
 import type { CourseDto } from '@/types/course';
 import type { DataTableHeader } from 'vuetify';
 import { rules } from "@/utils/rules";
-
-onMounted(() => {
-  courseStore.fetchCourses();
-});
 
 const courseStore = useCourseStore();
 
@@ -79,7 +77,7 @@ const dialogDelete = shallowRef<boolean>(false);
 const idToDelete = ref<string>('');
 const courseName = ref<string>('');
 const headers = ref<Readonly<DataTableHeader[]>>([
-  { title: 'Nome', key: 'name' },
+  { title: 'Nome', key: 'name', sortable: false },
   { title: 'Ações', key: 'actions', sortable: false, align: "end" }
 ]);
 
@@ -88,6 +86,10 @@ function createNewRecord(): CourseDto {
     id: '',
     name: ''
   }
+}
+
+function loadCourses(options: { page: number, itemsPerPage: number }) {
+  courseStore.fetchCourses(options.page, options.itemsPerPage);
 }
 
 function openCreateDialog() {
