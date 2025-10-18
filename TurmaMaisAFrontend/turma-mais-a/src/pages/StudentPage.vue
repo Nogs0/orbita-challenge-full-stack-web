@@ -19,7 +19,7 @@
         </div>
       </template>
       <template v-slot:no-data>
-        <no-items-table @add="openCreateDialog()"></no-items-table>
+        <no-items-table @add="openCreateDialog()" table-name="alunos"></no-items-table>
       </template>
     </v-data-table>
   </v-sheet>
@@ -48,7 +48,7 @@
 
           <v-spacer></v-spacer>
 
-          <v-btn text="Salvar" @click="save" :disabled="!isFormValid"></v-btn>
+          <v-btn text="Salvar" @click="save" color="green" :disabled="!isFormValid"></v-btn>
         </v-card-actions>
       </v-form>
     </v-card>
@@ -63,7 +63,7 @@
       <v-card-actions class="bg-surface-light">
         <v-btn text="Cancelar" variant="plain" @click="closeDeleteDialog()"></v-btn>
         <v-spacer></v-spacer>
-        <v-btn text="Excluir" @click="deleteItem(idToDelete)"></v-btn>
+        <v-btn text="Excluir" color="red" @click="deleteItem(idToDelete)" variant="tonal"></v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

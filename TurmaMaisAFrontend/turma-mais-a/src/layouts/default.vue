@@ -32,7 +32,7 @@
       <v-card-actions class="bg-surface-light">
         <v-btn text="Cancelar" variant="plain" @click="closeLogoutDialog()"></v-btn>
         <v-spacer></v-spacer>
-        <v-btn text="Sair" @click="authStore.logout()"></v-btn>
+        <v-btn text="Sair" color="red" @click="authStore.logout()" variant="tonal"></v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

@@ -1,6 +1,7 @@
 export interface CourseState {
     courses: CourseDto[],
-    loading: boolean,
+    loadingList: boolean,
+    loadingItem: boolean,
     error: string | null,
     course: CourseDto | null
 }

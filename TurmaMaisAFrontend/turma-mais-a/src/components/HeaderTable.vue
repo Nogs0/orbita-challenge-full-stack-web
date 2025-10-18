@@ -10,11 +10,11 @@
 </template>
 
 <script setup lang="ts">
-interface HeaderTableDto {
+interface HeaderTableProps {
     tableName: string;
 }
 
-defineProps<HeaderTableDto>();
+defineProps<HeaderTableProps>();
 
 interface Emits {
   (e: 'add'): void; 

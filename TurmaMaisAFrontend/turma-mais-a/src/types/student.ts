@@ -1,6 +1,7 @@
 export interface StudentState {
     students: StudentListDto[],
-    loading: boolean,
+    loadingList: boolean,
+    loadingItem: boolean,
     error: string | null,
     student: StudentDto | null
 }

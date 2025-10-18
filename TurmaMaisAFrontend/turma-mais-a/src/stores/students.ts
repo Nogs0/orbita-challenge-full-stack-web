@@ -1,4 +1,3 @@
-// Utilities
 import type { StudentState, StudentListDto, StudentDto, StudentUpdateDto, StudentCreateDto } from '@/types/student'
 import axios, { isAxiosError } from 'axios';
 import { defineStore } from 'pinia'
@@ -6,19 +5,21 @@ import { defineStore } from 'pinia'
 function getInitialState(): StudentState {
     const students: StudentListDto[] = [];
     const student = null;
-    const loading = false;
+    const loadingList = false;
+    const loadingItem = false;
     const error = null;
-    return { students, student, loading, error };
+    return { students, student, loadingList, loadingItem, error };
 }
 
 export const useStudentStore = defineStore('Students', {
     state: (): StudentState => getInitialState(),
     getters: {
-        isLoadingStudents: (state): boolean => !!state.loading
+        isLoadingStudents: (state): boolean => !!state.loadingList,
+        isLoadingStudent: (state): boolean => !!state.loadingItem,
     },
     actions: {
         async createStudent(dto: StudentCreateDto): Promise<void> {
-            this.loading = true;
+            this.loadingItem = true;
             this.error = null;
             try {
                 const response = await axios.post<StudentDto>('/Students', dto);
@@ -28,11 +29,11 @@ export const useStudentStore = defineStore('Students', {
                 this.error = 'Não foi possível carregar os alunos.';
                 console.error(err);
             } finally {
-                this.loading = false;
+                this.loadingItem = false;
             }
         },
         async fetchStudents(): Promise<void> {
-            this.loading = true;
+            this.loadingList = true;
             this.error = null;
             try {
                 const response = await axios.get<StudentListDto[]>('/Students');
@@ -41,11 +42,11 @@ export const useStudentStore = defineStore('Students', {
                 this.error = 'Não foi possível carregar os alunos.';
                 console.error(err);
             } finally {
-                this.loading = false;
+                this.loadingList = false;
             }
         },
         async fetchStudentById(id: string): Promise<void> {
-            this.loading = true;
+            this.loadingItem = true;
             this.error = null;
             try {
                 const response = await axios.get<StudentDto>('/Students/' + id);
@@ -54,11 +55,11 @@ export const useStudentStore = defineStore('Students', {
                 this.error = 'Não foi possível carregar o aluno.';
                 console.error(err);
             } finally {
-                this.loading = false;
+                this.loadingItem = false;
             }
         },
         async updateStudent(dto: StudentUpdateDto): Promise<void> {
-            this.loading = true;
+            this.loadingItem = true;
             this.error = null;
             try {
                 await axios.put<StudentDto>('/Students/' + dto.id, dto);
@@ -67,11 +68,11 @@ export const useStudentStore = defineStore('Students', {
                 this.error = 'Não foi possível atualizar o aluno.';
                 console.error(err);
             } finally {
-                this.loading = false;
+                this.loadingItem = false;
             }
         },
         async deleteStudent(id: string): Promise<void> {
-            this.loading = true;
+            this.loadingItem = true;
             this.error = null;
             try {
                 await axios.delete<StudentDto>('/Students/' + id);
@@ -80,7 +81,7 @@ export const useStudentStore = defineStore('Students', {
                 this.error = 'Não foi possível excluir o aluno.';
                 console.error(err);
             } finally {
-                this.loading = false;
+                this.loadingItem = false;
             }
         }
     }
