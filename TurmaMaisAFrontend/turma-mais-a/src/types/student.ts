@@ -1,3 +1,4 @@
+import type { EnrollmentDto } from "./enrollment";
 import type { PagedInputDto } from "./shared";
 
 export interface StudentState {
@@ -16,6 +17,7 @@ export interface StudentDto {
     ra: string;
     cpf: string;
     email: string;
+    enrollments?: EnrollmentDto[]
 }
 
 export interface StudentListDto {

@@ -36,7 +36,7 @@ const router = createRouter({
       meta: { requiresAuth: true }, // Todas as rotas filhas exigem login!
       children: [
         {
-          path: '/',
+          path: '',
           redirect: '/students'
         },
         {

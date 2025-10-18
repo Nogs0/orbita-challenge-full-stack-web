@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-main class="d-flex align-center justify-center" style="background-color: #f5f5f5;">
+    <v-main class="d-flex align-center justify-center">
       <router-view v-slot="{ Component }">
         <v-fade-transition mode="out-in">
           <component :is="Component" />

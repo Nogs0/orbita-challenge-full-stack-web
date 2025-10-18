@@ -14,11 +14,24 @@ import { createVuetify } from 'vuetify'
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
   theme: {
-    defaultTheme: 'system',
+    themes: {
+      light: {
+        dark: false,
+        colors: {
+          primary: '#1b2731',
+          accent: '#9D1722',
+          error: '#C9031A',
+          info: '#2196F3',
+          success: '#4CAF50',
+          warning: '#FB8C00',
+          background: '#fafafa'
+        },
+      },
+    },
   },
   locale: {
-    locale: 'pt', // Define o português como idioma padrão
-    fallback: 'en', // Idioma a ser usado caso uma tradução falhe
-    messages: { pt }, // Passa o objeto de tradução importado
+    locale: 'pt',
+    fallback: 'en',
+    messages: { pt },
   },
 })
