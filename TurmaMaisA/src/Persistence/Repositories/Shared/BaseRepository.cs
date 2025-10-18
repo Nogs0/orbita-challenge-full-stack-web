@@ -41,6 +41,14 @@ namespace TurmaMaisA.Persistence.Repositories.Shared
             return await _dbSet.CountAsync(predicate);
         }
 
+        public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>>? predicate = null)
+        {
+            if (predicate == null)
+                return await _dbSet.AnyAsync();
+
+            return await _dbSet.AnyAsync(predicate);
+        }
+
         public async Task<int> CountWithIgnoreQueryFiltersAsync(Expression<Func<TEntity, bool>>? predicate = null)
         {
             if (predicate == null)

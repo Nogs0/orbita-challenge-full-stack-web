@@ -5,6 +5,7 @@ using TurmaMaisA.Persistence.Repositories.Students;
 using TurmaMaisA.Services.Shared.Dtos;
 using TurmaMaisA.Services.Students.Dtos;
 using TurmaMaisA.Utils.Exceptions;
+using TurmaMaisA.Utils.Formatters;
 using TurmaMaisA.Utils.Validators;
 
 namespace TurmaMaisA.Services.Students
@@ -28,13 +29,18 @@ namespace TurmaMaisA.Services.Students
             if (!cpfIsValid)
                 throw new BusinessRuleException("CPF fornecido é inválido.");
 
+            dto.Cpf = CpfFormatter.Format(dto.Cpf);
+            bool cpfExists = await _repository.AnyAsync(s => s.Cpf == dto.Cpf);
+            if (cpfExists)
+                throw new BusinessRuleException("CPF já cadastrado.");
+
             var studentCount = await _repository.CountWithIgnoreQueryFiltersAsync(s => s.OrganizationId == dto.OrganizationId);
             var student = new Student()
             {
                 Name = dto.Name,
                 Cpf = dto.Cpf,
                 RA = (studentCount + 1).ToString(),
-                Email = dto.Email,
+                Email = dto.Email
             };
 
             await _repository.CreateAsync(student);
