@@ -1,6 +1,6 @@
 <template>
     <v-dialog :model-value="show" persistent max-width="800px">
-        <v-card title="Matricular Aluno">
+        <v-card :title="`Matricular Aluno ${studentName}`">
             <v-divider></v-divider>
             <v-container>
                 <v-row align="center" class="mb-4">

@@ -14,12 +14,12 @@
                 :rules="[rules.required, rules.maxLength(128), rules.email]"></v-text-field>
               <v-text-field v-model="password" label="Senha *" type="password" prepend-inner-icon="mdi-lock-outline"
                 :rules="[rules.required, rules.maxLength(64)]"></v-text-field>
-              <v-btn type="submit" color="primary" block class="mt-2" :loading="authStore.isLoading"
+              <v-btn type="submit" color="green" block class="mt-2" :loading="authStore.isLoading"
                 :disabled="!isFormValid">
                 Entrar
               </v-btn>
             </v-form>
-            <v-btn color="success" block  to="/register" class="mt-5">
+            <v-btn color="primary" block  to="/register" class="mt-5">
               Cadastrar-se
             </v-btn>
           </v-card-text>
