@@ -12,3 +12,6 @@ _Optei por separar as decisões para cada camada da aplicação, as bibliotecas 
 
 # Quais requisitos obrigatórios que não foram entregues
 - Acredito ter entregue todos os requisitos.
+
+# Demonstração
+[Demonstração](https://github.com/Nogs0/orbita-challenge-full-stack-web/wiki/Gerenciamento-de-Alunos)
