@@ -90,7 +90,7 @@ namespace TurmaMaisA.Test.Services.Students
         {
             //Arrange
             var studentId = Guid.NewGuid();
-            var returnedStudent = new Student()
+            var studentDb = new Student()
             {
                 Id = studentId,
                 Name = "João",
@@ -99,7 +99,7 @@ namespace TurmaMaisA.Test.Services.Students
                 RA = "1"
             };
 
-            _mockRepository.Setup(r => r.GetByIdAsync(studentId)).ReturnsAsync(returnedStudent);
+            _mockRepository.Setup(r => r.GetByIdAsync(studentId)).ReturnsAsync(studentDb);
 
             //Act
             var result = await _service.GetByIdAsync(studentId);
@@ -215,6 +215,44 @@ namespace TurmaMaisA.Test.Services.Students
 
             //Act & Assert
             var exception = await Assert.ThrowsAsync<NotFoundException>(() => _service.UpdateAsync(studentUpdatedDto));
+            Assert.Equal(expectedMessage, exception.Message);
+        }
+
+        [Fact(DisplayName = "Delete When Student Is Found Should Return Correct Result")]
+        public async Task Delete_WhenStudentIsFound_ShouldReturnCorrectResult()
+        {
+            //Arrange
+            var studentId = Guid.NewGuid();
+            var studentDb = new Student()
+            {
+                Id = studentId,
+                Name = "João",
+                Email = "joao@teste.com",
+                Cpf = "037.870.100-25",
+                RA = "1"
+            };
+
+            _mockRepository.Setup(r => r.GetByIdAsync(studentId)).ReturnsAsync(studentDb);
+
+            //Act
+            await _service.DeleteAsync(studentId);
+
+            //Assert
+            _mockRepository.Verify(r => r.Delete(studentDb), Times.Once);
+            _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact(DisplayName = "Delete When Student Is Not Found Should Throw NotFoundException")]
+        public async Task Delete_WhenStudentIsNotFound_ShouldThrowNotFoundException()
+        {
+            //Arrange
+            var nonExistentStudentId = Guid.NewGuid();
+            _mockRepository.Setup(r => r.GetByIdAsync(nonExistentStudentId)).ReturnsAsync((Student?)null);
+
+            var expectedMessage = $"The entity 'Student' with key '{nonExistentStudentId}' was not found.";
+
+            //Act & Assert
+            var exception = await Assert.ThrowsAsync<NotFoundException>(() => _service.DeleteAsync(nonExistentStudentId));
             Assert.Equal(expectedMessage, exception.Message);
         }
     }
