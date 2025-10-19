@@ -2,6 +2,8 @@
 using TurmaMaisA.Models;
 using TurmaMaisA.Persistence.Interfaces;
 using TurmaMaisA.Persistence.Repositories.Courses;
+using TurmaMaisA.Persistence.Repositories.Enrollments;
+using TurmaMaisA.Persistence.Repositories.Students;
 using TurmaMaisA.Services.Courses.Dtos;
 using TurmaMaisA.Services.Shared.Dtos;
 using TurmaMaisA.Utils.Exceptions;
@@ -11,11 +13,14 @@ namespace TurmaMaisA.Services.Courses
     public class CourseService : ICourseService
     {
         private readonly ICourseRepository _repository;
+        private readonly IEnrollmentRepository _enrollmentRepository;
         private readonly IUnitOfWork _uow;
 
-        public CourseService(ICourseRepository repository, IUnitOfWork uow)
+        public CourseService(ICourseRepository repository, IUnitOfWork uow,
+            IEnrollmentRepository enrollmentRepository)
         {
             _repository = repository;
+            _enrollmentRepository = enrollmentRepository;
             _uow = uow;
         }
 
@@ -44,8 +49,9 @@ namespace TurmaMaisA.Services.Courses
 
             if (!string.IsNullOrEmpty(dto.Search))
             {
+                var search = dto.Search.Trim().ToLower();
                 searchExp = (s) =>
-                s.Name.Trim().Contains(dto.Search, StringComparison.CurrentCultureIgnoreCase);
+                s.Name.Trim().ToLower().Contains(dto.Search);
             }
 
             var result = await _repository.GetPagedItemsAsync(dto.PageNumber, dto.PageSize, searchExp);
@@ -75,6 +81,10 @@ namespace TurmaMaisA.Services.Courses
         {
             var entity = await _repository.GetByIdAsync(id) ??
                 throw new NotFoundException("Course", id);
+
+            var enrrolments = await _enrollmentRepository.GetAllByCourseId(id);
+            if (enrrolments.Count > 0)
+                throw new BusinessRuleException("Não é possível excluir um curso que algum aluno esteja matrículado.");
 
             _repository.Delete(entity);
             await _uow.SaveChangesAsync();

@@ -20,5 +20,12 @@ namespace TurmaMaisA.Persistence.Repositories.Enrollments
                 .Where(x => x.StudentId == studentId)
                 .ToListAsync();
         }
+
+        public async Task<List<Enrollment>> GetAllByCourseId(Guid courseId)
+        {
+            return await _enrollments.Include(e => e.Course)
+                .Where(x => x.CourseId == courseId)
+                .ToListAsync();
+        }
     }
 }
