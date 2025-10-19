@@ -64,7 +64,7 @@ namespace TurmaMaisA.Test.Services.Auth
             Assert.True(result.IsSuccess);
             Assert.NotNull(result.Token);
             Assert.NotEmpty(result.Token);
-            Assert.Null(result.ErrorMessage);
+            Assert.Null(result.Message);
         }
 
         [Theory(DisplayName = "Login When Credentials Are Invalid Should Return Failure")]
@@ -92,7 +92,7 @@ namespace TurmaMaisA.Test.Services.Auth
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.Equal(expectedErrorMessage, result.ErrorMessage);
+            Assert.Equal(expectedErrorMessage, result.Message);
             Assert.Null(result.Token);
         }
 
@@ -144,7 +144,7 @@ namespace TurmaMaisA.Test.Services.Auth
             Assert.True(result.IsSuccess);
             Assert.NotNull(result.Token);
             Assert.NotEmpty(result.Token);
-            Assert.Null(result.ErrorMessage);
+            Assert.Null(result.Message);
 
             _mockUserManager.Verify(um => um.CreateAsync(
                 It.Is<User>(u =>
@@ -208,8 +208,8 @@ namespace TurmaMaisA.Test.Services.Auth
 
             // Assert
             Assert.False(result.IsSuccess);
-            Assert.NotNull(result.ErrorMessage);
-            Assert.Contains(result.ErrorMessage, identityError.Description);
+            Assert.NotNull(result.Message);
+            Assert.Contains(result.Message, identityError.Description);
             Assert.Null(result.Token);
         }
     }

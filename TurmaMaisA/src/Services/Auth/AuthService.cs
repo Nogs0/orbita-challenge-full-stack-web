@@ -35,7 +35,7 @@ namespace TurmaMaisA.Services.Auth
             var user = await _userManager.FindByEmailAsync(dto.Username);
             if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password))
             {
-                return new AuthResultDto { IsSuccess = false, ErrorMessage = "Credenciais inválidas." };
+                return new AuthResultDto { IsSuccess = false, Message = "Credenciais inválidas." };
             }
 
             var organization = await _organizationRepository.GetByIdAsync(user.OrganizationId) ??
@@ -80,7 +80,7 @@ namespace TurmaMaisA.Services.Auth
                 return new AuthResultDto
                 {
                     IsSuccess = false,
-                    ErrorMessage = string.Join(",", result.Errors.Select(e => e.Description).ToArray())
+                    Message = string.Join(",", result.Errors.Select(e => e.Description).ToArray())
                 };
             }
 

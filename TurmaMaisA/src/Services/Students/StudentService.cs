@@ -61,10 +61,11 @@ namespace TurmaMaisA.Services.Students
 
             if (!string.IsNullOrEmpty(dto.Search))
             {
+                var search = dto.Search.Trim().ToLower();
                 searchExp = (s) =>
-                s.Name.Trim().Contains(dto.Search, StringComparison.CurrentCultureIgnoreCase) ||
-                s.RA.Trim().Contains(dto.Search, StringComparison.CurrentCultureIgnoreCase) ||
-                s.Cpf.Trim().Contains(dto.Search, StringComparison.CurrentCultureIgnoreCase);
+                s.Name.Trim().ToLower().Contains(search) ||
+                s.RA.Trim().ToLower().Contains(search) ||
+                s.Cpf.Trim().ToLower().Contains(search);
             }
 
             var result = await _repository.GetPagedItemsAsync(dto.PageNumber, dto.PageSize, searchExp);
