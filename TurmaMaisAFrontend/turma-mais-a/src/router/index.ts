@@ -18,6 +18,10 @@ const router = createRouter({
       meta: { requiresAuth: false },
       children: [
         {
+          path: '',
+          redirect: '/login'
+        },
+        {
           path: '/login',
           name: 'login',
           component: () => import('@/pages/LoginPage.vue'),

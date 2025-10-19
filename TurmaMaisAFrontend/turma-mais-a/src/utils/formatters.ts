@@ -1,4 +1,4 @@
-export function formatarCPF(value: string | null | undefined): string {
+export function formatCpf(value: string | null | undefined): string {
   if (!value) {
     return '';
   }

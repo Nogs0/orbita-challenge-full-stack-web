@@ -4,10 +4,11 @@
       :hide-default-footer="courseStore.totalCountCourses < 11" :items="courseStore.courses"
       :items-length="courseStore.totalCountCourses" @update:options="loadCourses" disable-sort>
       <template v-slot:top>
-        <header-table table-name="Seus Cursos" icon="mdi-book-variant" @add="openCreateDialog()"> </header-table>
+        <header-table table-name="Seus Cursos" icon="mdi-book-variant" @add="openCreateDialog()" search-fields="Nome"
+          @search="handleSearch"> </header-table>
       </template>
       <template v-slot:item.actions="{ item }">
-        <div class="d-flex ga-2 justify-end">
+        <div class="d-flex ga-2 justify-center">
           <v-icon color="medium-emphasis" icon="mdi-pencil" size="small" title="Editar"
             @click="openEditDialog(item.id)"></v-icon>
           <v-icon color="medium-emphasis" icon="mdi-delete" size="small" title="Excluir"
@@ -74,9 +75,13 @@ const loadingItem = ref<boolean>(false);
 const dialogDelete = shallowRef<boolean>(false);
 const idToDelete = ref<string>("");
 const courseName = ref<string>("");
+
+const currentPage = ref<number>(1);
+const currentItemsPerPage = ref<number>(1);
+
 const headers = ref<Readonly<DataTableHeader[]>>([
   { title: "Nome", key: "name", sortable: false },
-  { title: "Ações", key: "actions", sortable: false, align: "end" },
+  { title: "Ações", key: "actions", sortable: false, align: "center", width: '10%' },
 ]);
 
 function createNewRecord(): CourseDto {
@@ -88,8 +93,13 @@ function createNewRecord(): CourseDto {
 
 function loadCourses(options: { page: number; itemsPerPage: number }) {
   courseStore.fetchCourses(options.page, options.itemsPerPage);
+  currentPage.value = options.page;
+  currentItemsPerPage.value = options.itemsPerPage;
 }
 
+function handleSearch(searchTerm: string) {
+  courseStore.fetchCourses(currentPage.value, currentItemsPerPage.value, searchTerm)
+}
 function openCreateDialog() {
   formModel.value = createNewRecord();
   dialog.value = true;
@@ -126,8 +136,8 @@ async function save() {
 
       showSnackbar('Curso atualizado com sucesso.', 'success');
     } catch (error) {
-      if (isAxiosError(error) && error.response?.data?.errorMessage) {
-        showSnackbar(error.response.data.errorMessage, 'error');
+      if (isAxiosError(error) && error.response?.data?.message) {
+        showSnackbar(error.response.data.message, 'error');
       }
       console.error(error);
     } finally {
@@ -142,8 +152,8 @@ async function save() {
       showSnackbar('Curso criado com sucesso.', 'success');
 
     } catch (error) {
-      if (isAxiosError(error) && error.response?.data?.errorMessage) {
-        showSnackbar(error.response.data.errorMessage, 'error');
+      if (isAxiosError(error) && error.response?.data?.message) {
+        showSnackbar(error.response.data.message, 'error');
       }
       console.error(error);
     } finally {
@@ -172,8 +182,8 @@ async function deleteItem(id: string) {
     closeDeleteDialog();
   }
   catch (error) {
-    if (isAxiosError(error) && error.response?.data?.errorMessage) {
-      showSnackbar(error.response.data.errorMessage, 'error');
+    if (isAxiosError(error) && error.response?.data?.message) {
+      showSnackbar(error.response.data.message, 'error');
     }
     console.error(error);
   }

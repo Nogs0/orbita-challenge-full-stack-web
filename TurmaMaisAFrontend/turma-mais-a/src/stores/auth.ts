@@ -82,8 +82,8 @@ export const useAuthStore = defineStore('auth', {
 
         let message = 'Ocorreu um erro inesperado. Tente novamente.';
 
-        if (isAxiosError(error) && error.response?.data?.errorMessage) {
-          message = error.response.data.errorMessage;
+        if (isAxiosError(error) && error.response?.data?.message) {
+          message = error.response.data.message;
         }
         return {
           success: false,
@@ -141,8 +141,8 @@ export const useAuthStore = defineStore('auth', {
 
         let message = 'Ocorreu um erro inesperado. Tente novamente.';
 
-        if (isAxiosError(error) && error.response?.data?.errorMessage) {
-          message = error.response.data.errorMessage;
+        if (isAxiosError(error) && error.response?.data?.message) {
+          message = error.response.data.message;
         }
         return {
           success: false,

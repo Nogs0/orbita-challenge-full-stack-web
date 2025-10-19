@@ -110,8 +110,8 @@ async function saveEnrollments() {
         emit('close');
     }
     catch (error) {
-        if (isAxiosError(error) && error.response?.data?.errorMessage) {
-            showSnackbar(error.response.data.errorMessage, 'error');
+        if (isAxiosError(error) && error.response?.data?.message) {
+            showSnackbar(error.response.data.message, 'error');
         }
         console.error(error);
     }
