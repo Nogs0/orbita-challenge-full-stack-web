@@ -2,7 +2,7 @@ import { useSnackbar } from '@/composables/useSnackbar';
 import type { CourseCreateDto, CourseDto, CourseState } from '@/types/course';
 import type { PagedResultDto } from '@/types/shared';
 import axios from 'axios';
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
 const { showSnackbar } = useSnackbar();
 
 function getInitialState(): CourseState {
@@ -25,20 +25,9 @@ export const useCourseStore = defineStore('Courses', {
     },
     actions: {
         async createCourse(dto: CourseCreateDto): Promise<void> {
-            this.loadingItem = true;
-            this.error = null;
-            try {
-                const response = await axios.post<CourseDto>('/Courses', dto);
-                this.course = response.data;
-                await this.fetchCourses();
-                showSnackbar('Curso criado com sucesso.', 'success');
-            } catch (err) {
-                showSnackbar('Não foi possível criar o curso.', 'error');
-                this.error = 'Não foi possível criar o curso.';
-                console.error(err);
-            } finally {
-                this.loadingItem = false;
-            }
+            const response = await axios.post<CourseDto>('/Courses', dto);
+            this.course = response.data;
+            await this.fetchCourses();
         },
         async fetchCourses(pageNumber?: number, pageSize?: number, search?: string): Promise<void> {
             this.loadingList = true;
@@ -93,34 +82,12 @@ export const useCourseStore = defineStore('Courses', {
             }
         },
         async updateCourse(dto: CourseDto): Promise<void> {
-            this.loadingItem = true;
-            this.error = null;
-            try {
-                await axios.put<CourseDto>('/Courses/' + dto.id, dto);
-                await this.fetchCourses();
-                showSnackbar('Curso atualizado com sucesso.', 'success');
-            } catch (err) {
-                showSnackbar('Não foi possível atualizar o curso.', 'error');
-                this.error = 'Não foi possível atualizar o curso.';
-                console.error(err);
-            } finally {
-                this.loadingItem = false;
-            }
+            await axios.put<CourseDto>('/Courses/' + dto.id, dto);
+            await this.fetchCourses();
         },
         async deleteStudent(id: string): Promise<void> {
-            this.loadingItem = true;
-            this.error = null;
-            try {
-                await axios.delete<CourseDto>('/Courses/' + id);
-                await this.fetchCourses();
-                showSnackbar('Curso excluído com sucesso.', 'success');
-            } catch (err) {
-                showSnackbar('Não foi possível excluir o curso.', 'error');
-                this.error = 'Não foi possível excluir o curso.';
-                console.error(err);
-            } finally {
-                this.loadingItem = false;
-            }
+            await axios.delete<CourseDto>('/Courses/' + id);
+            await this.fetchCourses();
         }
     }
 })

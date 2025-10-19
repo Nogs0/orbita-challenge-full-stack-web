@@ -1,34 +1,17 @@
 <template>
   <v-sheet border rounded>
-    <v-data-table-server
-      class="elevation-4"
-      :headers="headers"
-      :loading="courseStore.isLoadingCourses"
-      :hide-default-footer="courseStore.totalCountCourses < 11"
-      :items="courseStore.courses"
-      :items-length="courseStore.totalCountCourses"
-      @update:options="loadCourses"
-      disable-sort
-    >
+    <v-data-table-server class="elevation-4" :headers="headers" :loading="courseStore.isLoadingCourses"
+      :hide-default-footer="courseStore.totalCountCourses < 11" :items="courseStore.courses"
+      :items-length="courseStore.totalCountCourses" @update:options="loadCourses" disable-sort>
       <template v-slot:top>
         <header-table table-name="Seus Cursos" icon="mdi-book-variant" @add="openCreateDialog()"> </header-table>
       </template>
       <template v-slot:item.actions="{ item }">
         <div class="d-flex ga-2 justify-end">
-          <v-icon
-            color="medium-emphasis"
-            icon="mdi-pencil"
-            size="small"
-            title="Editar"
-            @click="openEditDialog(item.id)"
-          ></v-icon>
-          <v-icon
-            color="medium-emphasis"
-            icon="mdi-delete"
-            size="small"
-            title="Excluir"
-            @click="openDeleteDialog(item.id, item.name)"
-          ></v-icon>
+          <v-icon color="medium-emphasis" icon="mdi-pencil" size="small" title="Editar"
+            @click="openEditDialog(item.id)"></v-icon>
+          <v-icon color="medium-emphasis" icon="mdi-delete" size="small" title="Excluir"
+            @click="openDeleteDialog(item.id, item.name)"></v-icon>
         </div>
       </template>
       <template v-slot:no-data>
@@ -40,30 +23,17 @@
   <v-dialog v-model="dialog" max-width="500" persistent>
     <v-card :title="`${isEditing ? 'Editar' : 'Adicionar'} Curso`">
       <v-divider></v-divider>
-      <v-form ref="formCreateOrEditCourse" v-model="isFormValid">
+      <v-form ref="formCreateOrEditCourse" v-model="isFormValid" :loading="loadingItem">
         <v-container>
-          <v-text-field
-            v-model="formModel.name"
-            label="Nome *"
-            :rules="[rules.required, rules.maxLength(128)]"
-          ></v-text-field>
+          <v-text-field v-model="formModel.name" label="Nome *"
+            :rules="[rules.required, rules.maxLength(128)]"></v-text-field>
         </v-container>
         <v-card-actions class="bg-surface-light">
-          <v-btn
-            text="Cancelar"
-            variant="plain"
-            @click="closeCreateOrEditDialog()"
-          ></v-btn>
+          <v-btn text="Cancelar" variant="plain" @click="closeCreateOrEditDialog()"></v-btn>
 
           <v-spacer></v-spacer>
 
-          <v-btn
-            text="Salvar"
-            @click="save"
-            color="green"
-            :disabled="!isFormValid"
-            variant="tonal"
-          ></v-btn>
+          <v-btn text="Salvar" @click="save" color="green" :disabled="!isFormValid" variant="tonal"></v-btn>
         </v-card-actions>
       </v-form>
     </v-card>
@@ -78,12 +48,7 @@
       <v-card-actions class="bg-surface-light">
         <v-btn text="Cancelar" variant="tonal" @click="closeDeleteDialog()"></v-btn>
         <v-spacer></v-spacer>
-        <v-btn
-          text="Excluir"
-          color="accent"
-          @click="deleteItem(idToDelete)"
-          variant="tonal"
-        ></v-btn>
+        <v-btn text="Excluir" color="accent" @click="deleteItem(idToDelete)" variant="tonal"></v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -94,15 +59,18 @@ import { useCourseStore } from "@/stores/courses";
 import type { CourseDto } from "@/types/course";
 import type { DataTableHeader } from "vuetify";
 import { rules } from "@/utils/rules";
+import { isAxiosError } from "axios";
+import { useSnackbar } from "@/composables/useSnackbar";
 
 const courseStore = useCourseStore();
+const { showSnackbar } = useSnackbar();
 
 const formModel = ref<CourseDto>(createNewRecord());
 const dialog = shallowRef<boolean>(false);
 const isEditing = ref<boolean>(false);
 const formCreateOrEditCourse = ref<HTMLFormElement | null>(null);
 const isFormValid = ref<boolean>(false);
-
+const loadingItem = ref<boolean>(false);
 const dialogDelete = shallowRef<boolean>(false);
 const idToDelete = ref<string>("");
 const courseName = ref<string>("");
@@ -135,28 +103,53 @@ async function openEditDialog(id: string) {
       id: courseStore.course.id,
       name: courseStore.course.name,
     };
+    dialog.value = true;
   }
-  dialog.value = true;
 }
 
 async function save() {
   const { valid } = await formCreateOrEditCourse.value?.validate();
-
   if (!valid) return;
 
-  if (isEditing.value) {
-    await courseStore.updateCourse({
-      id: formModel.value.id,
-      name: formModel.value.name,
-    });
-    isEditing.value = false;
-  } else {
-    await courseStore.createCourse({
-      name: formModel.value.name,
-    });
-  }
+  loadingItem.value = true;
 
-  dialog.value = false;
+  if (isEditing.value) {
+    try {
+      await courseStore.updateCourse({
+        id: formModel.value.id,
+        name: formModel.value.name,
+      });
+      dialog.value = false;
+      setTimeout(() => {
+        isEditing.value = false;
+      }, 200);
+
+      showSnackbar('Curso atualizado com sucesso.', 'success');
+    } catch (error) {
+      if (isAxiosError(error) && error.response?.data?.errorMessage) {
+        showSnackbar(error.response.data.errorMessage, 'error');
+      }
+      console.error(error);
+    } finally {
+      loadingItem.value = false;
+    }
+  } else {
+    try {
+      await courseStore.createCourse({
+        name: formModel.value.name,
+      });
+      dialog.value = false;
+      showSnackbar('Curso criado com sucesso.', 'success');
+
+    } catch (error) {
+      if (isAxiosError(error) && error.response?.data?.errorMessage) {
+        showSnackbar(error.response.data.errorMessage, 'error');
+      }
+      console.error(error);
+    } finally {
+      loadingItem.value = false;
+    }
+  }
 }
 
 function closeCreateOrEditDialog() {
@@ -173,8 +166,20 @@ function openDeleteDialog(id: string, name: string) {
 }
 
 async function deleteItem(id: string) {
-  await courseStore.deleteStudent(id);
-  closeDeleteDialog();
+  loadingItem.value = true;
+  try {
+    await courseStore.deleteStudent(id);
+    closeDeleteDialog();
+  }
+  catch (error) {
+    if (isAxiosError(error) && error.response?.data?.errorMessage) {
+      showSnackbar(error.response.data.errorMessage, 'error');
+    }
+    console.error(error);
+  }
+  finally {
+    loadingItem.value = false;
+  }
 }
 
 function closeDeleteDialog() {

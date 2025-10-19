@@ -32,7 +32,8 @@
             <v-card-actions class="bg-surface-light">
                 <v-btn variant="tonal" @click="emit('close')">Cancelar</v-btn>
                 <v-spacer></v-spacer>
-                <v-btn variant="tonal" color="green" @click="saveEnrollments" :loading="enrollmentStore.isLoadingEnrollments">
+                <v-btn variant="tonal" color="green" @click="saveEnrollments"
+                    :loading="enrollmentStore.isLoadingEnrollments">
                     Salvar
                 </v-btn>
             </v-card-actions>
@@ -45,9 +46,10 @@ import { ref, watch } from 'vue';
 // Supondo que você crie essas stores e tipos
 import { useSnackbar } from '@/composables/useSnackbar';
 import { useCourseStore } from '@/stores/courses';
-import type { CourseDto } from '@/types/course';
-import type { DataTableHeader } from 'vuetify';
 import { useEnrollmentsStore } from '@/stores/enrollments';
+import type { CourseDto } from '@/types/course';
+import { isAxiosError } from 'axios';
+import type { DataTableHeader } from 'vuetify';
 
 interface EnrollmentModalProps {
     show: boolean;
@@ -72,6 +74,7 @@ const isLoadingCourses = ref(false);
 const selectedCourse = ref<CourseDto | null>(null);
 const availableCourses = ref<CourseDto[]>([]);
 const selectedCourses = ref<CourseDto[]>([]);
+const isLoading = ref(false);
 
 const tableHeaders: Readonly<DataTableHeader[]> = [
     { title: 'Matéria', key: 'name', sortable: false },
@@ -98,13 +101,23 @@ function removeCourseFromSelection(courseId: string) {
 
 async function saveEnrollments() {
     if (!props.studentId) return;
-
+    isLoading.value = true;
     const coursesIds = selectedCourses.value.map(c => c.id);
-    await enrollmentStore.saveEnrollments(props.studentId, coursesIds);
-
-    showSnackbar('Matrículas salvas com sucesso!', 'success');
-    emit('saved');
-    emit('close');
+    try {
+        await enrollmentStore.saveEnrollments(props.studentId, coursesIds);
+        showSnackbar('Matrículas salvas com sucesso!', 'success');
+        emit('saved');
+        emit('close');
+    }
+    catch (error) {
+        if (isAxiosError(error) && error.response?.data?.errorMessage) {
+            showSnackbar(error.response.data.errorMessage, 'error');
+        }
+        console.error(error);
+    }
+    finally {
+        isLoading.value = false;
+    }
 }
 
 watch(() => props.show, (isVisible) => {

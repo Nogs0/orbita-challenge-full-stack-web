@@ -1,7 +1,6 @@
 import { useSnackbar } from '@/composables/useSnackbar';
 import type { CourseDto } from '@/types/course';
 import type { EnrollmentDto, EnrollmentState, SetStudentEnrollmentsDto } from '@/types/enrollment';
-import type { StudentState } from '@/types/student';
 import axios from 'axios';
 import { defineStore } from 'pinia';
 const { showSnackbar } = useSnackbar();
@@ -20,23 +19,12 @@ export const useEnrollmentsStore = defineStore('Enrollments', {
     },
     actions: {
         async saveEnrollments(studentId: string, coursesIds: string[]): Promise<void> {
-            this.loading = true;
-            try {
-                const dto: SetStudentEnrollmentsDto = {
-                    studentId,
-                    coursesIds
-                };
+            const dto: SetStudentEnrollmentsDto = {
+                studentId,
+                coursesIds
+            };
 
-                await axios.put(`/Students/${studentId}/Enrollments`, dto);
-                showSnackbar('Matrículas atualizadas com sucesso.', 'success');
-            }
-            catch (err) {
-                showSnackbar('Não foi possível atualizar as matrículas.', 'error');
-                this.error = 'Não foi possível atualizar as matrículas.';
-                console.error(err);
-            } finally {
-                this.loading = false;
-            }
+            await axios.put(`/Students/${studentId}/Enrollments`, dto);
         },
         async fetchCoursesByStudentId(studentId: string): Promise<CourseDto[]> {
             this.loading = true;
