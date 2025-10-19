@@ -2,8 +2,8 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
-using TurmaMaisA.Models;
 using TurmaMaisA.Models.Organizations;
+using TurmaMaisA.Models.Users;
 using TurmaMaisA.Services.Auth;
 using TurmaMaisA.Services.Auth.Dtos;
 using TurmaMaisA.Utils.Exceptions;

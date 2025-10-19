@@ -68,13 +68,6 @@ namespace TurmaMaisA.Controllers
         {
             _logger.LogInformation($"Fetching course with ID: {id}", id);
             var course = await _service.GetByIdAsync(id);
-
-            if (course == null)
-            {
-                _logger.LogWarning($"Course with ID: {id} not found.", id);
-                return NotFound();
-            }
-
             return Ok(course);
         }
 

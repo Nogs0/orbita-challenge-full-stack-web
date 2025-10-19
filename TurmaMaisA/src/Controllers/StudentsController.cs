@@ -74,13 +74,6 @@ namespace TurmaMaisA.Controllers
         {
             _logger.LogInformation($"Fetching student with ID: {id}", id);
             var student = await _service.GetByIdAsync(id);
-
-            if (student == null)
-            {
-                _logger.LogWarning($"Student with ID: {id} not found.", id);
-                return NotFound();
-            }
-
             return Ok(student);
         }
 

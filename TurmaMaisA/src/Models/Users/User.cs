@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using TurmaMaisA.Models.Organizations;
 
-namespace TurmaMaisA.Models
+namespace TurmaMaisA.Models.Users
 {
     public class User : IdentityUser
     {

@@ -6,6 +6,7 @@ using TurmaMaisA.Models.Courses;
 using TurmaMaisA.Models.Enrollments;
 using TurmaMaisA.Models.Organizations;
 using TurmaMaisA.Models.Shared;
+using TurmaMaisA.Models.Users;
 using TurmaMaisA.Persistence.Interfaces;
 
 namespace TurmaMaisA.Persistence
