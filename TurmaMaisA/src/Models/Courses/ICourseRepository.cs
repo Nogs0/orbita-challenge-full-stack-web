@@ -1,7 +1,6 @@
-﻿using TurmaMaisA.Models;
-using TurmaMaisA.Persistence.Repositories.Shared;
+﻿using TurmaMaisA.Models.Shared;
 
-namespace TurmaMaisA.Persistence.Repositories.Courses
+namespace TurmaMaisA.Models.Courses
 {
     public interface ICourseRepository : IBaseRepository<Course>
     {

@@ -1,4 +1,4 @@
-﻿using TurmaMaisA.Models;
+﻿using TurmaMaisA.Models.Enrollments;
 using TurmaMaisA.Services.Courses.Dtos;
 
 namespace TurmaMaisA.Services.Enrollments.Dtos

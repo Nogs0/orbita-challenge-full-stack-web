@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using TurmaMaisA.Models.Shared;
-using TurmaMaisA.Persistence;
 
 namespace TurmaMaisA.Persistence.Repositories.Shared
 {

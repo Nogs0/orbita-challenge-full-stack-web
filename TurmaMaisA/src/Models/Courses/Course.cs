@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using TurmaMaisA.Models.Organizations;
 using TurmaMaisA.Models.Shared;
 
-namespace TurmaMaisA.Models
+namespace TurmaMaisA.Models.Courses
 {
     public class Course : BaseEntity, IMustHaveOrganizationId, ISoftDelete
     {

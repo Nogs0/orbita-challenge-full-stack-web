@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using TurmaMaisA.Models.Shared;
 
-namespace TurmaMaisA.Models
+namespace TurmaMaisA.Models.Organizations
 {
     public class Organization : BaseEntity
     {

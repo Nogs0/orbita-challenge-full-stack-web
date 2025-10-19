@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TurmaMaisA.Models;
+using TurmaMaisA.Models.Students;
 using TurmaMaisA.Persistence;
 using TurmaMaisA.Persistence.Repositories.Shared;
 

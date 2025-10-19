@@ -1,4 +1,4 @@
-﻿using TurmaMaisA.Models;
+﻿using TurmaMaisA.Models.Courses;
 using TurmaMaisA.Services.Courses.Dtos;
 using TurmaMaisA.Services.Shared;
 using TurmaMaisA.Services.Shared.Dtos;

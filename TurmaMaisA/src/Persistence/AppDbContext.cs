@@ -2,6 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using TurmaMaisA.Models;
+using TurmaMaisA.Models.Courses;
+using TurmaMaisA.Models.Enrollments;
+using TurmaMaisA.Models.Organizations;
 using TurmaMaisA.Models.Shared;
 using TurmaMaisA.Persistence.Interfaces;
 

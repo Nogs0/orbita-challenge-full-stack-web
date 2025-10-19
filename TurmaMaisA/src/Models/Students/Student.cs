@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using TurmaMaisA.Models.Enrollments;
+using TurmaMaisA.Models.Organizations;
 using TurmaMaisA.Models.Shared;
 
 namespace TurmaMaisA.Models

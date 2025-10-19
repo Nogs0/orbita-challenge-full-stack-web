@@ -1,5 +1,4 @@
-﻿using TurmaMaisA.Models;
-using TurmaMaisA.Persistence;
+﻿using TurmaMaisA.Models.Organizations;
 using TurmaMaisA.Persistence.Repositories.Shared;
 
 namespace TurmaMaisA.Persistence.Repositories.Organizations

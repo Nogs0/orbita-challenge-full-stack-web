@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using TurmaMaisA.Models;
+using TurmaMaisA.Models.Students;
 using TurmaMaisA.Persistence.Interfaces;
-using TurmaMaisA.Persistence.Repositories.Students;
 using TurmaMaisA.Services.Shared.Dtos;
 using TurmaMaisA.Services.Students.Dtos;
 using TurmaMaisA.Utils.Exceptions;

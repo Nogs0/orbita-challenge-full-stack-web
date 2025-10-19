@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel;
+using TurmaMaisA.Models.Courses;
 using TurmaMaisA.Models.Shared;
 
-namespace TurmaMaisA.Models
+namespace TurmaMaisA.Models.Enrollments
 {
     public class Enrollment : BaseEntity, IMustHaveOrganizationId, ISoftDelete
     {

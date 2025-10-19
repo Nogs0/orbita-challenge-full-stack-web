@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
+using TurmaMaisA.Persistence.Repositories.Shared;
 
-namespace TurmaMaisA.Persistence.Repositories.Shared
+namespace TurmaMaisA.Models.Shared
 {
     public interface IBaseRepository<TEntity>
     {

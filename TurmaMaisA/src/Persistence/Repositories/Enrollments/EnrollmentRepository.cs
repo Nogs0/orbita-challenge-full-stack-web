@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TurmaMaisA.Models;
+using TurmaMaisA.Models.Enrollments;
 using TurmaMaisA.Persistence;
 using TurmaMaisA.Persistence.Repositories.Shared;
 

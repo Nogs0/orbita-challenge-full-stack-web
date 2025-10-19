@@ -5,7 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using TurmaMaisA.Models;
-using TurmaMaisA.Persistence.Repositories.Organizations;
+using TurmaMaisA.Models.Organizations;
 using TurmaMaisA.Services.Auth.Dtos;
 using TurmaMaisA.Utils.Exceptions;
 using TurmaMaisA.Utils.Settings;

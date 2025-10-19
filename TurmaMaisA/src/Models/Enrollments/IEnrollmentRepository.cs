@@ -1,7 +1,6 @@
-﻿using TurmaMaisA.Models;
-using TurmaMaisA.Persistence.Repositories.Shared;
+﻿using TurmaMaisA.Models.Shared;
 
-namespace TurmaMaisA.Persistence.Repositories.Enrollments
+namespace TurmaMaisA.Models.Enrollments
 {
     public interface IEnrollmentRepository : IBaseRepository<Enrollment>
     {

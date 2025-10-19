@@ -1,8 +1,8 @@
 ﻿using Moq;
 using TurmaMaisA.Models;
+using TurmaMaisA.Models.Courses;
+using TurmaMaisA.Models.Enrollments;
 using TurmaMaisA.Persistence.Interfaces;
-using TurmaMaisA.Persistence.Repositories.Courses;
-using TurmaMaisA.Persistence.Repositories.Enrollments;
 using TurmaMaisA.Services.Courses;
 using TurmaMaisA.Services.Courses.Dtos;
 using TurmaMaisA.Utils.Exceptions;

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TurmaMaisA.Models;
+using TurmaMaisA.Models.Courses;
 using TurmaMaisA.Persistence.Repositories.Shared;
 
 namespace TurmaMaisA.Persistence.Repositories.Courses

@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using TurmaMaisA.Models;
+using TurmaMaisA.Models.Courses;
 
 namespace TurmaMaisA.Services.Courses.Dtos
 {
