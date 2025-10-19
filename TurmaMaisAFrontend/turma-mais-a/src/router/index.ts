@@ -36,8 +36,8 @@ const router = createRouter({
     // --- ÁREA LOGADA ---
     {
       path: '/app',
-      component: () => import('@/layouts/default.vue'),
-      meta: { requiresAuth: true }, // Todas as rotas filhas exigem login!
+      component: () => import('@/layouts/DefaultLayout.vue'),
+      meta: { requiresAuth: true },
       children: [
         {
           path: '',

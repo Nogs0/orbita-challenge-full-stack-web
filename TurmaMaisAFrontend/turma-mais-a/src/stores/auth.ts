@@ -110,6 +110,8 @@ export const useAuthStore = defineStore('auth', {
       }
     },
     async register(dto: RegisterDto): Promise<AuthResultDto> {
+      this.isLoading = true;
+      this.error = null;
       try {
         const response = await axios.post<AuthState>('/Auth/register', dto);
 

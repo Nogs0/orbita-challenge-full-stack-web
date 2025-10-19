@@ -30,7 +30,7 @@
                 Cadastrar
               </v-btn>
             </v-form>
-            <v-btn color="success" block to="/login" class="mt-5">
+            <v-btn color="primary" block to="/login" class="mt-5" :disabled="authStore.isLoading">
               Fazer login
             </v-btn>
           </v-card-text>

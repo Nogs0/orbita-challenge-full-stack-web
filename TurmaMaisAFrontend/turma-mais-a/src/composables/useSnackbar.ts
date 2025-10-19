@@ -5,7 +5,6 @@ const text = ref<string>('');
 const color = ref<'success' | 'error' | 'info' | 'warning'>('success');
 
 export function useSnackbar() {
-  // Função para mostrar o snackbar
   const showSnackbar = (newText: string, newColor: 'success' | 'error' | 'info' | 'warning' = 'success') => {
     text.value = newText;
     color.value = newColor;
