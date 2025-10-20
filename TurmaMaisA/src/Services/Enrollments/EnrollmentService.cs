@@ -31,9 +31,6 @@ namespace TurmaMaisA.Services.Enrollments
             var student = await _studentRepository.GetByIdAsync(dto.StudentId) ??
                 throw new NotFoundException("Student", dto.StudentId);
 
-            if (dto.CoursesIds == null || dto.CoursesIds.Count == 0)
-                throw new BusinessRuleException("A lista de cursos deve conter ao menos um elemento.");
-
             var coursesToEnroll = await _courseRepository.GetByIdsAsync(dto.CoursesIds);
 
             var notFoundCourses = dto.CoursesIds.Where(dtoCId => !coursesToEnroll.Select(c => c.Id).Contains(dtoCId));

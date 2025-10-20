@@ -169,35 +169,5 @@ namespace TurmaMaisA.Test.Services.Enrollments
             var exception = await Assert.ThrowsAsync<NotFoundException>(() => _service.SetEnrolllmentsAsync(dto));
             Assert.Equal(expectedMessage, exception.Message);
         }
-
-        [Fact(DisplayName = "Set Enrollments When The CoursesIds Are Null Or Empty Should Throw BusinessRuleException")]
-        public async Task SetEnrollments_WhenTheCoursesIdsArevalid_ShouldThrowBusinessRuleException()
-        {
-            //Arrange
-            Guid studentId = Guid.NewGuid();
-
-            var student = new Student()
-            {
-                Id = studentId,
-                Name = "João",
-                Cpf = "062.873.700-92",
-                Email = "joao@teste.com",
-                RA = "1",
-                OrganizationId = Guid.NewGuid()
-            };
-
-            var dto = new SetStudentEnrollmentsDto()
-            {
-                StudentId = studentId,
-                CoursesIds = new List<Guid> { }
-            };
-
-            _mockStudentRepository.Setup(sr => sr.GetByIdAsync(studentId)).ReturnsAsync(student);
-            var expectedMessage = "A lista de cursos deve conter ao menos um elemento.";
-
-            //Act & Assert
-            var exception = await Assert.ThrowsAsync<BusinessRuleException>(() => _service.SetEnrolllmentsAsync(dto));
-            Assert.Equal(expectedMessage, exception.Message);
-        }
     }
 }

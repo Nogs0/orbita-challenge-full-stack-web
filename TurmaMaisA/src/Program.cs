@@ -133,7 +133,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowVueApp", policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
+        policy.WithOrigins("http://localhost:5173")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -146,6 +146,28 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+var isRunningInContainer = Environment.GetEnvironmentVariable("IS_RUNNING_IN_CONTAINER");
+
+if (bool.TryParse(isRunningInContainer, out var isContainer) && isContainer)
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        try
+        {
+            var dbContext = services.GetRequiredService<AppDbContext>();
+            dbContext.Database.Migrate();
+
+            Console.WriteLine("Migrações do EF Core aplicadas com sucesso.");
+        }
+        catch (Exception ex)
+        {
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "Ocorreu um erro ao aplicar as migrações do EF Core.");
+        }
+    }
 }
 
 app.UseHttpsRedirection();
