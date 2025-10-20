@@ -100,16 +100,8 @@ namespace TurmaMaisA.Persistence
             }
 
             modelBuilder.Entity<Student>()
-                .HasIndex(s => new { s.RA, s.OrganizationId })
+                .HasIndex(s => new { s.RA, s.Cpf, s.OrganizationId })
                 .IsUnique();
-
-            modelBuilder.Entity<Student>(entity =>
-            {
-                entity.Property<string>("UniqueCPF_Active")
-                    //    Se DeletedAt for nulo (ativo), a coluna recebe o CPF. Senão, recebe NULL.
-                    .HasComputedColumnSql("IF(DeletedAt IS NULL, CPF, NULL)", stored: true);
-                entity.HasIndex("UniqueCPF_Active", "OrganizationId").IsUnique();
-            });
         }
     }
 }

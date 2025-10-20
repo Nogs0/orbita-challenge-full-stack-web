@@ -23,7 +23,12 @@ namespace TurmaMaisA.Services.Students
             _uow = uow;
         }
 
-        public async Task<StudentDto> CreateAsync(StudentCreateDto dto)
+        public Task<StudentDto> CreateAsync(StudentCreateDto dto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<StudentDto> CreateAsync(StudentCreateDto dto, Guid organizationId)
         {
             bool cpfIsValid = CpfValidator.Validate(dto.Cpf);
             if (!cpfIsValid)
@@ -34,13 +39,19 @@ namespace TurmaMaisA.Services.Students
             if (cpfExists)
                 throw new BusinessRuleException("CPF já cadastrado.");
 
-            var studentCount = await _repository.CountWithIgnoreQueryFiltersAsync(s => s.OrganizationId == dto.OrganizationId);
+            dto.Email = dto.Email.Trim().ToLower();
+            bool emailExists = await _repository.AnyAsync(s => s.Email == dto.Email);
+            if (emailExists)
+                throw new BusinessRuleException("Email já cadastrado.");
+
+            var studentCount = await _repository.CountWithIgnoreQueryFiltersAsync(s => s.OrganizationId == organizationId);
             var student = new Student()
             {
                 Name = dto.Name,
                 Cpf = dto.Cpf,
                 RA = (studentCount + 1).ToString(),
-                Email = dto.Email
+                Email = dto.Email,
+                OrganizationId = organizationId
             };
 
             await _repository.CreateAsync(student);
@@ -82,6 +93,11 @@ namespace TurmaMaisA.Services.Students
 
         public async Task UpdateAsync(StudentUpdateDto dto)
         {
+            dto.Email = dto.Email.Trim().ToLower();
+            bool emailExists = await _repository.AnyAsync(s => s.Id != dto.Id && s.Email == dto.Email);
+            if (emailExists)
+                throw new BusinessRuleException("Email já cadastrado.");
+
             var entity = await _repository.GetByIdAsync(dto.Id) ??
                 throw new NotFoundException("Student", dto.Id);
 

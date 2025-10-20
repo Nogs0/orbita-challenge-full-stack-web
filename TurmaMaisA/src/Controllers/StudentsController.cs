@@ -37,8 +37,7 @@ namespace TurmaMaisA.Controllers
             if (claimOrganizationId == null)
                 return BadRequest("You must to be logged in to create a student.");
 
-            dto.OrganizationId = Guid.Parse(claimOrganizationId.Value);
-            var student = await _service.CreateAsync(dto);
+            var student = await _service.CreateAsync(dto, Guid.Parse(claimOrganizationId.Value));
             return CreatedAtAction(nameof(GetById), new { id = student.Id }, student);
         }
 
