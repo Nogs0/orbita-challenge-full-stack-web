@@ -15,7 +15,5 @@ namespace TurmaMaisA.Services.Students.Dtos
         [Required(ErrorMessage = "The 'Cpf' is required")]
         [MaxLength(14)]
         public required string Cpf { get; set; }
-
-        public Guid? OrganizationId { get; set; }
     }
 }

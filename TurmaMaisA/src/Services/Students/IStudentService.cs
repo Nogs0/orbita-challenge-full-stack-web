@@ -7,6 +7,7 @@ namespace TurmaMaisA.Services.Students
 {
     public interface IStudentService : IBaseServiceCrud<Student, StudentDto, StudentListDto, StudentCreateDto, StudentUpdateDto>
     {
+        Task<StudentDto> CreateAsync(StudentCreateDto dto, Guid organizationId);
         Task<PagedResultDto<StudentListDto>> GetPagedItemsAsync(PagedInputDto dto);
     }
 }
