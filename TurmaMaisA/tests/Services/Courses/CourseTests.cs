@@ -58,6 +58,30 @@ namespace TurmaMaisA.Test.Services.Courses
             _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
+        [Fact(DisplayName = "Create With Invalid Input Should Throw BusinessRuleException")]
+        public async Task Create_WhenValidInput_ShouldThrowBusinessRuleException()
+        {
+            //Arrange
+            var newCourseDto = new CourseCreateDto()
+            {
+                Name = "Algoritmo e Estrutura de Dados I"
+            };
+
+
+            var submittedCourse = new Course()
+            {
+                Name = "Algoritmo e Estrutura de Dados I"
+            };
+
+            _mockRepository.Setup(r => r.AnyAsync(c => c.Name.Trim().ToLower() == newCourseDto.Name.Trim().ToLower())).Returns(Task.FromResult(true));
+
+            var expectedMessage = "Já existe um curso cadastrado com esse nome.";
+
+            //Act & Assert
+            var exception = await Assert.ThrowsAsync<BusinessRuleException>(() => _service.CreateAsync(newCourseDto));
+            Assert.Equal(expectedMessage, exception.Message);
+        }
+
         [Fact(DisplayName = "GetById When Course Exists Should Return CourseDto")]
         public async Task Get_WithExistentId_ShouldReturnCourseDto()
         {

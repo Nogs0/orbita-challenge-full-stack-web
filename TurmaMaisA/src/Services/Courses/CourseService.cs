@@ -25,6 +25,10 @@ namespace TurmaMaisA.Services.Courses
 
         public async Task<CourseDto> CreateAsync(CourseCreateDto dto)
         {
+            bool nameExists = await _repository.AnyAsync(c => c.Name.Trim().ToLower() == dto.Name.Trim().ToLower());
+            if (nameExists)
+                throw new BusinessRuleException("Já existe um curso cadastrado com esse nome.");
+
             var course = new Course()
             {
                 Name = dto.Name
