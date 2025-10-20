@@ -3,26 +3,25 @@ version: '3.8'
 services:
   backend:
     build:
-      context: ./TurmaMaisA  # Aponta para a pasta com o Dockerfile do backend
+      context: ./TurmaMaisA 
       dockerfile: Dockerfile
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:
-      - "5186:8080"  # Mapeia a porta 7047 da sua máquina para a porta 8080 do container
+      - "7047:8080" 
     environment:
       - IS_RUNNING_IN_CONTAINER=true
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__DefaultConnection=Server=host.docker.internal;Port=3306;Database=turmamaisadb;Uid=root;Pwd=master;
-  # Serviço do Frontend Vue
   frontend:
     build:
-      context: ./TurmaMaisAFrontend/turma-mais-a # Aponta para a pasta com o Dockerfile do frontend
+      context: ./TurmaMaisAFrontend/turma-mais-a 
       dockerfile: Dockerfile
     ports:
-      - "5173:80"    # Mapeia a porta 5173 da sua máquina para a porta 80 do container Nginx
+      - "5173:80"
     depends_on:
-      - backend # Depende do backend para que a API esteja disponível
+      - backend
 
 volumes:
   mysql_data:

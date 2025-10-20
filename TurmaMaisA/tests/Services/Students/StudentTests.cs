@@ -27,6 +27,7 @@ namespace TurmaMaisA.Test.Services.Students
         public async Task Create_WhenValidInput_ShouldReturnCorrectResult()
         {
             //Arrange
+            var organizationId = Guid.NewGuid();
             var newStudentDto = new StudentCreateDto()
             {
                 Name = "João",
@@ -54,7 +55,7 @@ namespace TurmaMaisA.Test.Services.Students
             _mockRepository.Setup(r => r.CreateAsync(submitedStudent)).Returns(Task.FromResult(returnedStudent));
 
             //Act
-            var result = await _service.CreateAsync(newStudentDto);
+            var result = await _service.CreateAsync(newStudentDto, organizationId);
 
             //Assert
             _mockRepository.Verify(r => r.CreateAsync(
@@ -71,6 +72,7 @@ namespace TurmaMaisA.Test.Services.Students
         public async Task Create_WhenCpfIsInvalid_ShouldThrowBusinessRuleException()
         {
             //Arrange
+            var organizationId = Guid.NewGuid();
             var newStudentDto = new StudentCreateDto()
             {
                 Name = "João",
@@ -81,7 +83,7 @@ namespace TurmaMaisA.Test.Services.Students
             var expectedMessage = "CPF fornecido é inválido.";
 
             //Act & Assert
-            var exception = await Assert.ThrowsAsync<BusinessRuleException>(() => _service.CreateAsync(newStudentDto));
+            var exception = await Assert.ThrowsAsync<BusinessRuleException>(() => _service.CreateAsync(newStudentDto, organizationId));
             Assert.Equal(expectedMessage, exception.Message);
         }
 

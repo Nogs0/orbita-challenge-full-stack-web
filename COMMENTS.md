@@ -62,3 +62,11 @@ ou pelo cmd:
 ``` bash
     npm run dev
 ```
+
+# A aplicação estará disponível em:
+
+Frontend:
+- http://localhost:5173
+
+Backend (swagger): 
+- http://localhost:7047/swagger/index.html
