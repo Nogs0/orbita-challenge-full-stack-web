@@ -1,5 +1,5 @@
 <template>
-    <v-dialog :model-value="show" persistent max-width="800px">
+    <v-dialog :model-value="show" max-width="800px">
         <v-card :title="`Matricular Aluno ${studentName}`">
             <v-divider></v-divider>
             <v-container>
@@ -21,7 +21,7 @@
                 <v-data-table :headers="tableHeaders" :items="selectedCourses" density="compact"
                     no-data-text="Nenhuma matéria adicionada" hide-default-footer>
                     <template v-slot:item.actions="{ item }">
-                        <v-icon color="error" icon="mdi-delete" size="small"
+                        <v-icon color="accent" icon="mdi-delete" size="small"
                             @click="removeCourseFromSelection(item.id)"></v-icon>
                     </template>
                 </v-data-table>
@@ -33,7 +33,7 @@
                 <v-btn variant="tonal" @click="emit('close')">Cancelar</v-btn>
                 <v-spacer></v-spacer>
                 <v-btn variant="tonal" color="green" @click="saveEnrollments"
-                    :loading="enrollmentStore.isLoadingEnrollments">
+                    :loading="enrollmentStore.isLoadingEnrollments" :disabled="isLoading">
                     Salvar
                 </v-btn>
             </v-card-actions>
@@ -100,8 +100,11 @@ function removeCourseFromSelection(courseId: string) {
 }
 
 async function saveEnrollments() {
-    if (!props.studentId) return;
+    if (isLoading.value)
+        return;
+
     isLoading.value = true;
+    if (!props.studentId) return;
     const coursesIds = selectedCourses.value.map(c => c.id);
     try {
         await enrollmentStore.saveEnrollments(props.studentId, coursesIds);

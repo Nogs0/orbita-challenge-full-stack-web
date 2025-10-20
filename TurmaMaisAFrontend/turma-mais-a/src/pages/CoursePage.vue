@@ -21,10 +21,10 @@
     </v-data-table-server>
   </v-sheet>
 
-  <v-dialog v-model="dialog" max-width="500" persistent>
+  <v-dialog v-model="dialog" max-width="500">
     <v-card :title="`${isEditing ? 'Editar' : 'Adicionar'} Curso`">
       <v-divider></v-divider>
-      <v-form ref="formCreateOrEditCourse" v-model="isFormValid" :loading="loadingItem">
+      <v-form @submit.prevent="save" ref="formCreateOrEditCourse" v-model="isFormValid" :loading="loadingItem">
         <v-container>
           <v-text-field v-model="formModel.name" label="Nome *"
             :rules="[rules.required, rules.maxLength(128)]"></v-text-field>
@@ -34,13 +34,14 @@
 
           <v-spacer></v-spacer>
 
-          <v-btn text="Salvar" @click="save" color="green" :disabled="!isFormValid" variant="tonal"></v-btn>
+          <v-btn type="submit" text="Salvar" color="green" :loading="loadingItem"
+            :disabled="!isFormValid || loadingItem" variant="tonal"></v-btn>
         </v-card-actions>
       </v-form>
     </v-card>
   </v-dialog>
 
-  <v-dialog v-model="dialogDelete" max-width="500" persistent>
+  <v-dialog v-model="dialogDelete" max-width="500">
     <v-card :title="`Excluir Curso`">
       <v-divider></v-divider>
       <v-container>
@@ -49,7 +50,8 @@
       <v-card-actions class="bg-surface-light">
         <v-btn text="Cancelar" variant="tonal" @click="closeDeleteDialog()"></v-btn>
         <v-spacer></v-spacer>
-        <v-btn text="Excluir" color="accent" @click="deleteItem(idToDelete)" variant="tonal"></v-btn>
+        <v-btn text="Excluir" color="accent" @click="deleteItem(idToDelete)" variant="tonal"
+          :disabled="loadingItem"></v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -118,10 +120,18 @@ async function openEditDialog(id: string) {
 }
 
 async function save() {
-  const { valid } = await formCreateOrEditCourse.value?.validate();
-  if (!valid) return;
+
+  if (loadingItem.value)
+    return;
 
   loadingItem.value = true;
+
+  const { valid } = await formCreateOrEditCourse.value?.validate();
+  if (!valid) {
+    loadingItem.value = false;
+    return;
+  }
+
 
   if (isEditing.value) {
     try {

@@ -9,7 +9,7 @@
               @update:model-value="showAlert = false">
               {{ errorMessage }}
             </v-alert>
-            <v-form @submit.prevent="handleLogin" v-model="isFormValid" ref="formLogin">
+            <v-form @submit.prevent="handleLogin" v-model="isFormValid" ref="formLogin" :loading="authStore.isLoading">
               <v-text-field v-model="username" label="Email *" type="email" prepend-inner-icon="mdi-email-outline"
                 :rules="[rules.required, rules.maxLength(128), rules.email]"></v-text-field>
               <v-text-field v-model="password" label="Senha *" type="password" prepend-inner-icon="mdi-lock-outline"

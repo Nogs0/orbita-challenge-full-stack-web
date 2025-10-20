@@ -9,7 +9,7 @@
               @update:model-value="showAlert = false">
               {{ errorMessage }}
             </v-alert>
-            <v-form @submit.prevent="handleRegister" v-model="isFormValid" ref="formRegisterUser">
+            <v-form @submit.prevent="handleRegister" v-model="isFormValid" ref="formRegisterUser" :loading="authStore.isLoading">
               <v-text-field v-model="formModel.fullName" label="Nome completo *" type="text"
                 prepend-inner-icon="mdi-account-outline"
                 :rules="[rules.required, rules.minLength(3), rules.maxLength(128)]"></v-text-field>
