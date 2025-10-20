@@ -12,8 +12,9 @@ _Optei por separar as decisões para cada camada da aplicação, as bibliotecas 
 ## [Frontend](COMMENTS_FRONTEND.md)
 
 # O que você melhoraria se tivesse mais tempo
-- Adicionaria o tratamento de ativo/inativo para os Alunos.
 - Adicionaria controle de horários para saber se aquele aluno pode ou não se matrícular na matéria específica.
+- Lançamento de tarefas por matéria.
+- Controle de usuários, para que o administrador pudesse cadastrar colaboradores, como professores, funcionários e gerenciar os níveis de acesso. 
 - Adicionaria o controle para recuperação de senha.
 - Mais personalidade ao Frontend.
 
