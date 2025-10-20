@@ -18,11 +18,10 @@ A ideia principal era construir algo robusto porém levando em consideração se
     - Seguindo a mesma ideia da criação da IBaseRepository que contém os protótipos das funções básicas de CRUD, criei a BaseRepository, uma classe abstrata que contém a implementação da interface. Esta que por sua vez é herdada pelos outros repositories, evitando a duplicação de código.
     - No AppDbContext é onde os _Global Query Filters_ são aplicados, utilizando o ISoftDelete e a IMustHaveOrganizationId.
     - Da mesma forma é onde interceptamos as operações do EF para que quando um novo registro seja adicionado injetamos a OrganizationId e para quando um registro é excluído, injetarmos o DeletedAt ao invés de realizar o hard delete.
-    - Também é o lugar onde foi adicionado o controle para que o RA seja único por Organização.
-    - Além de um filtro que garante que o CPF seja único por organização, mas que verifique se o registro não está excluído para realizar o controle. A propriedade UniqueCPF_Active existe apenas no banco de dados e para o EF, não a utilizamos na aplicação. O funcionamento é o seguinte: ao criar um usuário a coluna UniqueCPF_Active recebe o valor do CPF, ao excluir, removemos o valor dessa coluna, pois o índice UNIQUE é realizado por ela, assim, ao remover um usuário "X" com o CPF "abc" podemos cadastrar outro usuário com o CPF "abc".
-        ![alt text](imgComments/uniqueCpfFilter.png) 
+    - Também é o lugar onde foi adicionado o controle para que o RA seja único por Organização e por CPF.
     
-        - Este é um ponto de **melhora futura**, acredito que o melhor mecanismo seja um tratamento para ativo inativo, caso um Aluno que tivesse sido inativado quisesse retornar seu cadastro bastaria ativá-lo, não criar um outro.
+        ![alt text](imgComments/raIndex.png)
+    
  - ### Services (Application)
     - Onde as regras para o funcionamento da aplicação se concentram, operações de autenticação, operações de CRUD para cada Entidade da plataforma e outras que forem necessárias.
     - Também temos nessa camada os DTOs (Data Transfer Object) que são responsáveis por trafegar os dados dentro da aplicação.
